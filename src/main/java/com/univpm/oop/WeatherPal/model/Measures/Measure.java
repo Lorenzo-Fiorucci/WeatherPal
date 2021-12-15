@@ -1,9 +1,13 @@
 package com.univpm.oop.WeatherPal.model.Measures;
 
+/**
+ * Class that represents a generic measure
+ * @param T : the concrete type for the measure value. It must be a non-primitive type
+ */
 public class Measure<T> {
 	
-	T value;
-	String unit;
+	protected T value;
+	protected String unit;
 
 	/**
 	 * 
@@ -21,6 +25,14 @@ public class Measure<T> {
 	 */
 	public Measure(T value) {
 		this(value, "");
+	}
+
+	public T getValue() {
+		return value;
+	}
+
+	public String getUnit() {
+		return unit;
 	}
 
 	@Override
