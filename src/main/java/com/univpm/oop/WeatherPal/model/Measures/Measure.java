@@ -2,9 +2,11 @@ package com.univpm.oop.WeatherPal.model.Measures;
 
 /**
  * Class that represents a generic measure
- * @param T : the concrete type for the measure value. It must be a non-primitive type
+ * @param T 
+ * 		: the concrete type for the measure value. It must be a class that extends
+ * 		<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Number.html">Number</a>
  */
-public class Measure<T> {
+public class Measure<T extends Number> {
 	
 	protected T value;
 	protected String unit;

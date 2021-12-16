@@ -7,9 +7,11 @@ import java.time.format.*;
 
 /**
  * Class that represents a measure with a date
- * @param T : the concrete type for the measure value. It must be a non-primitive type
+ * @param T 
+ * 		: the concrete type for the measure value. It must be a class that extends
+ * 		<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Number.html">Number</a>
  */
-public class DailyMeasure<T> extends Measure<T>{
+public class DailyMeasure<T extends Number> extends Measure<T>{
 
 	protected LocalDate date;
 
