@@ -38,8 +38,11 @@ public class Measure<T extends Number> {
 	}
 
 	@Override
-	public String toString() { //TODO aggiusta con if per unit
-		return "value: " + value + " " + unit;
+	public String toString() {
+		String toReturn = "value: " + value;
+		if(unit != "")
+			toReturn += " " + unit;
+		return toReturn;
 	}
 
 }

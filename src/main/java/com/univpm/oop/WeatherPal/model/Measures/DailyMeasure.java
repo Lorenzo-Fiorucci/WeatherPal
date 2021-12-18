@@ -1,7 +1,8 @@
 package com.univpm.oop.WeatherPal.model.Measures;
 
 import com.univpm.oop.WeatherPal.model.Exceptions.InvalidFormatterException;
-import com.univpm.oop.WeatherPal.service.EpochConverter;
+import com.univpm.oop.WeatherPal.tools.EpochConverter;
+
 import java.time.*;
 import java.time.format.*;
 
@@ -30,7 +31,6 @@ public class DailyMeasure<T extends Number> extends Measure<T>{
 	public DailyMeasure(T value, long epochSeconds) {
 		this(value, "", epochSeconds);
 	}
-
 
 	/**
 	 * 

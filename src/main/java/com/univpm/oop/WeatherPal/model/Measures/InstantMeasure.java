@@ -5,7 +5,7 @@ import java.time.format.DateTimeParseException;
 import java.time.*;
 
 import com.univpm.oop.WeatherPal.model.Exceptions.InvalidFormatterException;
-import com.univpm.oop.WeatherPal.service.EpochConverter;
+import com.univpm.oop.WeatherPal.tools.EpochConverter;
 
 /**
  * Class that represents measures with date and time
@@ -47,7 +47,7 @@ public class InstantMeasure<T extends Number> extends DailyMeasure<T> {
 	 * @param timeString
 	 * 		: the hour of the measure. It must follow the pattern HH:mm
 	 * @throws InvalidFormatterException
-	 * 		thrown if {@code dateFormat} a valid pattern
+	 * 		thrown if {@code dateFormat} isn't a valid pattern
 	 * @throws DateTimeParseException
 	 *		thrown if {@code stringDate} cannot be parsed using {@code dateFormat} 's pattern
 	 *		or if {@code stringTime} cannot be parsed using the pattern HH:mm
