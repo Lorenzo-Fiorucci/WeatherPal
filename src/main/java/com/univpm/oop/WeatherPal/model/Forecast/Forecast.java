@@ -18,5 +18,4 @@ public class Forecast {
     private Measure<Float> pop;
     private Measure<Byte> uv;
 
-
 }

@@ -8,7 +8,7 @@ public class DailyForecast extends Forecast {
     private LocalTime moonrise;
     private LocalTime moonset;
 
-    public DailyForecast(LocalTime sunrise, LocalTime sunset, LocalTime moonrise, LocalTime moonset) {
+    public DailyForecast (LocalTime sunrise, LocalTime sunset, LocalTime moonrise, LocalTime moonset) {
         this.sunrise = sunrise;
         this.sunset = sunset;
         this.moonrise = moonrise;

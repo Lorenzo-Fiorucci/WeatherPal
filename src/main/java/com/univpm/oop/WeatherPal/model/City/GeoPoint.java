@@ -12,7 +12,7 @@ public class GeoPoint {
         this.alt = alt;
     }
 
-    public double getGeoLat() {
+    public double getLat() {
         return lat;
     }
 
