@@ -1,10 +1,14 @@
-package com.univpm.oop.WeatherPal.model;
+package com.univpm.oop.WeatherPal.tools;
 
 
 import com.univpm.oop.WeatherPal.model.Exceptions.*;
 import java.time.*;
 import java.time.format.*;
 
+/**
+ * Class that represent a period of time between two LocalDateTime objects.
+ * Designed to facilitate verification of dates contained or not in a certain period.
+ */
 public class Period {
 	
 	LocalDateTime start, end;
@@ -51,6 +55,11 @@ public class Period {
 		end = LocalDate.parse(endDate, DateTimeFormatter.ofPattern(dateFormat)).atStartOfDay();
 	}
 
+	/**
+	 * 
+	 * @param dateTime : LocalDateTime to be checked.
+	 * @return True if {@code dateTime} is contained in this period, false otherwise. 
+	 */
 	public boolean contains(LocalDateTime dateTime) {
 		return (dateTime.compareTo(start) >= 0) && (dateTime.compareTo(end) <= 0);
 	}

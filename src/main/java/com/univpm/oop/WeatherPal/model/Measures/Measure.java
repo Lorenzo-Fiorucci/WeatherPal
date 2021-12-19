@@ -33,8 +33,16 @@ public class Measure<T extends Number> {
 		return value;
 	}
 
+	public void setValue(T newValue) {
+		value = newValue;
+	}
+
 	public String getUnit() {
 		return unit;
+	}
+
+	public void setUnit(String newUnit) {
+		unit = newUnit;
 	}
 
 	@Override

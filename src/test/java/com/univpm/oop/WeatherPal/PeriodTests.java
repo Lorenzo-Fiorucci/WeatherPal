@@ -7,10 +7,11 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.LocalDateTime;
-
-import com.univpm.oop.WeatherPal.model.*;
 import com.univpm.oop.WeatherPal.model.Exceptions.*;
+import com.univpm.oop.WeatherPal.tools.Period;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class PeriodTests {
@@ -23,7 +24,7 @@ public class PeriodTests {
 		try {
 			p1 = new Period("12-12-2021", "16-12-2021", "dd-MM-yyyy", "09:15", "20:00", "HH:mm");
 			p2 = new Period("12-12-2021", "16-12-2021", "dd-MM-yyyy");
-			d = LocalDateTime.of(2021, 12, 16, 20, 00);
+			d = LocalDateTime.parse("16-12-2021_20-00", DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm"));
 		} catch(InvalidFormatterException e) {
 			System.out.println(e);
 		}
