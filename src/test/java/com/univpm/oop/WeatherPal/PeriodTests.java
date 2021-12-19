@@ -7,7 +7,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.univpm.oop.WeatherPal.model.Exceptions.*;
+import com.univpm.oop.WeatherPal.exceptions.*;
 import com.univpm.oop.WeatherPal.tools.Period;
 
 import java.time.LocalDateTime;

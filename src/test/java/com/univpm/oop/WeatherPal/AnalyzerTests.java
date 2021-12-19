@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Vector;
 
-import com.univpm.oop.WeatherPal.model.Exceptions.EmptyVectorException;
+import com.univpm.oop.WeatherPal.exceptions.EmptyVectorException;
 import com.univpm.oop.WeatherPal.model.Measures.Measure;
 import com.univpm.oop.WeatherPal.tools.MeasuresAnalyzer;
 

@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.*;
 
-import com.univpm.oop.WeatherPal.model.Exceptions.InvalidFormatterException;
+import com.univpm.oop.WeatherPal.exceptions.InvalidFormatterException;
 import com.univpm.oop.WeatherPal.tools.EpochConverter;
 
 /**

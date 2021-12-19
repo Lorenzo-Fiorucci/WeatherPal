@@ -1,9 +1,10 @@
 package com.univpm.oop.WeatherPal.tools;
 
 
-import com.univpm.oop.WeatherPal.model.Exceptions.*;
 import java.time.*;
 import java.time.format.*;
+
+import com.univpm.oop.WeatherPal.exceptions.*;
 
 /**
  * Class that represent a period of time between two LocalDateTime objects.

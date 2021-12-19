@@ -3,8 +3,8 @@ package com.univpm.oop.WeatherPal.tools;
 import java.lang.Math;
 import java.util.Vector;
 
+import com.univpm.oop.WeatherPal.exceptions.EmptyVectorException;
 import com.univpm.oop.WeatherPal.model.Measures.Measure;
-import com.univpm.oop.WeatherPal.model.Exceptions.EmptyVectorException;
 
 public class MeasuresAnalyzer {
 

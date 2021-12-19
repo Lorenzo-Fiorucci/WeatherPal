@@ -1,4 +1,4 @@
-package com.univpm.oop.WeatherPal.model.Exceptions;
+package com.univpm.oop.WeatherPal.exceptions;
 
 public class EmptyVectorException extends Exception {
 	

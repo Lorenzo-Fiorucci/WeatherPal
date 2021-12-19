@@ -1,6 +1,6 @@
 package com.univpm.oop.WeatherPal.model.Measures;
 
-import com.univpm.oop.WeatherPal.model.Exceptions.InvalidFormatterException;
+import com.univpm.oop.WeatherPal.exceptions.InvalidFormatterException;
 import com.univpm.oop.WeatherPal.tools.EpochConverter;
 
 import java.time.*;
