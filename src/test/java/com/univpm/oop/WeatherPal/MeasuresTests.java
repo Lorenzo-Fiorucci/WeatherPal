@@ -12,6 +12,7 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class MeasuresTests {
+	
 	DailyMeasure<Integer> peso, velocita, mele;
 	InstantMeasure<Double> lat, lon, alt;
 	
