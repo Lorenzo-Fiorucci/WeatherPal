@@ -1,4 +1,4 @@
-package com.univpm.oop.WeatherPal.tools;
+package com.univpm.oop.WeatherPal.model.Filters;
 
 
 import java.time.*;
@@ -10,14 +10,29 @@ import com.univpm.oop.WeatherPal.exceptions.*;
  * Class that represent a period of time between two LocalDateTime objects.
  * Designed to facilitate verification of dates contained or not in a certain period.
  */
-public class Period {
+public class HourlyPeriod extends DailyPeriod{
 	
-	LocalDateTime start, end;
+	LocalTime startTime, endTime;
 
-	public Period(LocalDateTime start, LocalDateTime end) {
-		this.start = start;
-		this.end = end;
+	/**
+	 * 
+	 * @param startDate : date on n which the period starts
+	 * @param endDate : date on which the period ends
+	 * @param startTime : time the period starts
+	 * @param endTime : time the period ends
+	 */
+	public HourlyPeriod(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+		super(startDate, endDate);
+		this.startTime = startTime;
+		this.endTime = endTime;
 	}
+
+	public HourlyPeriod(LocalDateTime start, LocalDateTime end) {
+		super(start.toLocalDate(), end.toLocalDate());
+		startTime = start.toLocalTime();
+		endTime = end.toLocalTime();
+	}
+	
 
 	/**
 	 * 
@@ -44,38 +59,43 @@ public class Period {
 	 *		or if {@code startTime} or {@code endTime} cannot be parsed using {@code timeFormat}'s pattern
 	 */
 	
-	public Period(String startDate, String endDate, String dateFormat, String startTime, String endTime, String timeFormat)
+	public HourlyPeriod(String startDate, String endDate, String dateFormat, String startTime, String endTime, String timeFormat)
 		throws InvalidFormatterException, DateTimeParseException {
 		
-		start = LocalDateTime.parse(startDate + " " + startTime, DateTimeFormatter.ofPattern(dateFormat + " " + timeFormat));
-		end = LocalDateTime.parse(endDate + " " + endTime, DateTimeFormatter.ofPattern(dateFormat + " " + timeFormat));
+		super(startDate, endDate, dateFormat);
+		this.startTime = LocalTime.parse(startTime, DateTimeFormatter.ofPattern(timeFormat));
+		this.endTime = LocalTime.parse(endTime, DateTimeFormatter.ofPattern(timeFormat));
 	}
-
-	public Period(String startDate, String endDate, String dateFormat) throws InvalidFormatterException, DateTimeParseException {
-		start = LocalDate.parse(startDate, DateTimeFormatter.ofPattern(dateFormat)).atStartOfDay();
-		end = LocalDate.parse(endDate, DateTimeFormatter.ofPattern(dateFormat)).atStartOfDay();
+	
+	public LocalTime getStartTime() {
+		return startTime;
 	}
-
+	
+	public LocalTime getEndTime() {
+		return endTime;
+	}
+	
 	/**
 	 * 
 	 * @param dateTime : LocalDateTime to be checked.
 	 * @return True if {@code dateTime} is contained in this period, false otherwise. 
 	 */
 	public boolean contains(LocalDateTime dateTime) {
+		
+		LocalDateTime start = LocalDateTime.of(startDate, startTime);
+		LocalDateTime end = LocalDateTime.of(endDate, endTime);
+		
 		return (dateTime.compareTo(start) >= 0) && (dateTime.compareTo(end) <= 0);
 	}
 
-	public LocalDateTime getStart() {
-		return start;
-	}
-
-	public LocalDateTime getEnd() {
-		return end;
-	}
-
+	@Override
 	public String toString() {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-		return "from " + start.format(formatter) + " to " + end.format(formatter);
+		
+		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+		
+		return "from " + startDate.format(dateFormatter) + " at " + startTime.format(timeFormatter) + 
+			   ", to " + endDate.format(dateFormatter) + " at " + endTime.format(timeFormatter);
 	}
 
 }
