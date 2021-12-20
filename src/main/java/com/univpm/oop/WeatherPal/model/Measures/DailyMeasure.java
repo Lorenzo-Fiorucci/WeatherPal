@@ -16,6 +16,20 @@ public class DailyMeasure<T extends Number> extends Measure<T>{
 
 	protected LocalDate date;
 
+	public DailyMeasure(T value, String unit, LocalDate date) {
+		super(value, unit);
+		this.date = date;
+	}
+
+	public DailyMeasure(T value, LocalDate date) {
+		this(value, "", date);
+	}
+
+	public DailyMeasure(Measure<T> measure, LocalDate date) {
+		super(measure.value, measure.unit);
+		this.date = date;
+	}
+
 	/**
 	 * 
 	 * @param value : the value of the measure, which is of the non-primitive type {@code T}
@@ -79,6 +93,10 @@ public class DailyMeasure<T extends Number> extends Measure<T>{
 
 	public LocalDate getDate() {
 		return date;
+	}
+
+	public Measure<T> toMeasure() {
+		return new Measure<T>(value, unit);
 	}
 
 

@@ -17,6 +17,11 @@ public class InstantMeasure<T extends Number> extends DailyMeasure<T> {
 
 	LocalTime time;
 
+	public InstantMeasure(Measure<T> measure, LocalDate date, LocalTime time) {
+		super(measure, date);
+		this.time = time;
+	}
+
 	/**
 	 * 
 	 * @param value : the value of the measure, which is of the non-primitive type {@code T}

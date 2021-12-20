@@ -8,7 +8,7 @@ import com.univpm.oop.WeatherPal.model.Measures.Measure;
 
 public class MeasuresAnalyzer {
 
-	public static <T extends Number> Measure<T> findMax(Vector<Measure<T>> values) throws EmptyVectorException {
+	public static <T extends Measure<? extends Number>> T findMax(Vector<T> values) throws EmptyVectorException {
 		
 		if(values.isEmpty())
 			throw new EmptyVectorException("ERROR: empty vector passed to findMax.");
@@ -22,8 +22,7 @@ public class MeasuresAnalyzer {
 		return values.get(maxIndex);
 	}
 
-
-	public static <T extends Number> Measure<T> findMin(Vector<Measure<T>> values) throws EmptyVectorException {
+	public static  <T extends Measure<? extends Number>> T findMin(Vector<T> values) throws EmptyVectorException {
 
 		if(values.isEmpty())
 			throw new EmptyVectorException("ERROR: empty vector passed to findMin.");
@@ -38,14 +37,14 @@ public class MeasuresAnalyzer {
 	}
 
 
-	public static <T extends Number> double calcAvg(Vector<Measure<T>> values) throws EmptyVectorException {
+	public static <T extends Measure<? extends Number>> double calcAvg(Vector<T> values) throws EmptyVectorException {
 
 		if(values.isEmpty())
 			throw new EmptyVectorException("ERROR: empty vector passed to calcAvg.");
 
 		double avg = 0;
 		
-		for (Measure<T> m : values) {
+		for (T m : values) {
 			avg += m.getValue().doubleValue();
 		}
 		avg /= values.size();
@@ -54,7 +53,7 @@ public class MeasuresAnalyzer {
 	}
 
 
-	public static <T extends Number> double calcVar(Vector<Measure<T>> values) throws EmptyVectorException {
+	public static <T extends Measure<? extends Number>> double calcVar(Vector<T> values) throws EmptyVectorException {
 
 		if(values.isEmpty())
 			throw new EmptyVectorException("ERROE: empty vector passed to calcVar.");
@@ -62,7 +61,7 @@ public class MeasuresAnalyzer {
 		double var = 0;
 		double avg = calcAvg(values);
 
-		for (Measure<T> m : values) {
+		for (T m : values) {
 			var += Math.pow(m.getValue().doubleValue() - avg, 2);
 		}
 		var /= values.size() - 1;

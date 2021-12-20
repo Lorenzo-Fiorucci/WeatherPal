@@ -10,6 +10,10 @@ public class Population<T> implements Fluctuating<T> {
 	public T max, min;
 	public double avg, var, stdDev;
 
+	public Population(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public T getMax() {
 		return max;
