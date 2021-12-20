@@ -8,12 +8,12 @@ public class Forecast {
 
     private Weather weather;
     private LocalDate date;
-    private Measure<Float> temperature;
+    private Measure<Float> temp;
     private Measure<Float> feelsLike;
     private Measure<Byte> humidity;
     private Measure<Short> wind;
     private Measure<Short> pressure;
-    private Measure<Short> airPollution;
+    private Measure<Short> airPoll;
     private Measure<Byte> clouds;
     private Measure<Float> pop;
     private Measure<Byte> uv;
@@ -26,8 +26,8 @@ public class Forecast {
         return date;
     }
 
-    public Measure<Float> getTemperature(){
-        return temperature;
+    public Measure<Float> getTemp(){
+        return temp;
     }
 
     public Measure<Float> getFeelsLike(){
@@ -46,8 +46,8 @@ public class Forecast {
         return pressure;
     }
 
-    public Measure<Short> getAirPollution(){
-        return airPollution;
+    public Measure<Short> getAirPoll(){
+        return airPoll;
     }
 
     public Measure<Byte> getClouds(){
