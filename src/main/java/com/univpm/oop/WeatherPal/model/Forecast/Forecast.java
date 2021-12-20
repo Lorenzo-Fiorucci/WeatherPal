@@ -18,4 +18,48 @@ public class Forecast {
     private Measure<Float> pop;
     private Measure<Byte> uv;
 
+    public Weather getWeather(){
+        return weather;
+    }
+
+    public LocalDate getDate(){
+        return date;
+    }
+
+    public Measure<Float> getTemperature(){
+        return temperature;
+    }
+
+    public Measure<Float> getFeelsLike(){
+        return feelsLike;
+    }
+
+    public Measure<Byte> getHumidity(){
+        return humidity;
+    }
+
+    public Measure<Short> getWind(){
+        return wind;
+    }
+
+    public Measure<Short> getPressure(){
+        return pressure;
+    }
+
+    public Measure<Short> getAirPollution(){
+        return airPollution;
+    }
+
+    public Measure<Byte> getClouds(){
+        return clouds;
+    }
+
+    public Measure<Float> getPop(){
+        return pop;
+    }
+
+    public Measure<Byte> getUv(){
+        return uv;
+    }
+
 }
