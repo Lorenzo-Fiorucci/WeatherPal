@@ -1,10 +1,13 @@
 package com.univpm.oop.WeatherPal.model.Filters;
 
 
-import java.time.*;
-import java.time.format.*;
+import com.univpm.oop.WeatherPal.exceptions.InvalidFormatterException;
 
-import com.univpm.oop.WeatherPal.exceptions.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * Class that represent a period of time between two LocalDateTime objects.
@@ -95,7 +98,7 @@ public class HourlyPeriod extends DailyPeriod{
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 		
 		return "from " + startDate.format(dateFormatter) + " at " + startTime.format(timeFormatter) + 
-			   ", to " + endDate.format(dateFormatter) + " at " + endTime.format(timeFormatter);
+			   " to " + endDate.format(dateFormatter) + " at " + endTime.format(timeFormatter);
 	}
 
 }

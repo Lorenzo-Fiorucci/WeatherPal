@@ -1,11 +1,12 @@
 package com.univpm.oop.WeatherPal.model.Measures;
 
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.*;
-
 import com.univpm.oop.WeatherPal.exceptions.InvalidFormatterException;
 import com.univpm.oop.WeatherPal.tools.EpochConverter;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * Class that represents measures with date and time
