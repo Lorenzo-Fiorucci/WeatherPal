@@ -35,14 +35,30 @@ public class Stats {
 	 */
 
 	public Stats(Vector<? extends Forecast> forecasts) throws EmptyVectorException {
-	
-		temp = new Population<Measure<Float>>("Temperature");
-		feelsLike = new Population<Measure<Float>>("Feels like");
-		humidity = new Population<Measure<Byte>>("Humidity");
-		wind = new Population<Measure<Short>>("Wind");
-		pressure = new Population<Measure<Short>>("Pressure");
-		airPoll = new Population<Measure<Short>>("Air pollution");
-		clouds = new Population<Measure<Byte>>("Clouds");
+		
+		if(forecasts.isEmpty())
+			throw new EmptyVectorException("Passed empty forecasts vector to Stats' constructor.");
+
+		if (forecasts.get(0) instanceof HourlyForecast)
+		{
+			temp = new Population<InstantMeasure<Float>>("Temperature");
+			feelsLike = new Population<InstantMeasure<Float>>("Feels like");
+			humidity = new Population<InstantMeasure<Byte>>("Humidity");
+			wind = new Population<InstantMeasure<Short>>("Wind");
+			pressure = new Population<InstantMeasure<Short>>("Pressure");
+			airPoll = new Population<InstantMeasure<Short>>("Air pollution");
+			clouds = new Population<InstantMeasure<Byte>>("Clouds");
+		} 
+		else if (forecasts.get(0) instanceof DailyForecast)
+		{
+			temp = new Population<DailyMeasure<Float>>("Temperature");
+			feelsLike = new Population<DailyMeasure<Float>>("Feels like");
+			humidity = new Population<DailyMeasure<Byte>>("Humidity");
+			wind = new Population<DailyMeasure<Short>>("Wind");
+			pressure = new Population<DailyMeasure<Short>>("Pressure");
+			airPoll = new Population<DailyMeasure<Short>>("Air pollution");
+			clouds = new Population<DailyMeasure<Byte>>("Clouds");
+		} 
 		
 		setAll(temp, "temp", forecasts);
 		setAll(feelsLike, "feelsLike", forecasts);
@@ -56,8 +72,8 @@ public class Stats {
 
 	/**
 	 * Method that sets max, min, average, variance and standard deviation of a {@code Population} of {@code Measure} or subclasses
-	 * @param <T>
-	 * 		T : class that extends {@code Measure<? extends Number>}
+	 * @param <Z>
+	 * 		Z : class that extends {@code Measure<? extends Number>}
 	 * @param pop
 	 * 		: {@code Population} of {@code T} to be set
 	 * @param forecasts
@@ -68,14 +84,18 @@ public class Stats {
 	 * 		if {@code forecasts} is an empty vector. 
 	 */
 
-	private <T extends Measure<? extends Number>> void setAll(Population<T> pop, String nameOfMeasure, 
-						Vector<? extends Forecast> forecasts) throws EmptyVectorException {
-		
-		pop.setMax((T)MeasuresAnalyzer.findMax(getValues(forecasts, nameOfMeasure)));
-		pop.setMin((T)MeasuresAnalyzer.findMin(getValues(forecasts, nameOfMeasure)));
-		pop.setAvg(MeasuresAnalyzer.calcAvg(getValues(forecasts, nameOfMeasure)));
-		pop.setVar(MeasuresAnalyzer.calcVar(getValues(forecasts, nameOfMeasure)));
-		pop.setStdDev(Math.sqrt(pop.getVar()));
+	private <Z extends Measure<? extends Number>> void setAll(Population<Z> pop, String nameOfMeasure, 
+																				 Vector<? extends Forecast> forecasts) {
+		try {
+			pop.setMax((Z)MeasuresAnalyzer.findMax(getValues(forecasts, nameOfMeasure)));
+			pop.setMin((Z)MeasuresAnalyzer.findMin(getValues(forecasts, nameOfMeasure)));
+			pop.setAvg(MeasuresAnalyzer.calcAvg(getValues(forecasts, nameOfMeasure)));
+			pop.setVar(MeasuresAnalyzer.calcVar(getValues(forecasts, nameOfMeasure)));
+			pop.setStdDev(Math.sqrt(pop.getVar()));
+		} 
+		catch(EmptyVectorException e) {
+			// il caso in cui forecasts e' vuoto e' stato gia' gestito nel costruttore, prima della chiamata a questa funzione
+		}
 	}
 
 
@@ -92,123 +112,121 @@ public class Stats {
 	 * 		if {@code forecasts} is an empty vector.
 	 */
 
-	private Vector<? extends Measure<? extends Number>> getValues(Vector<? extends Forecast> forecasts, String nameOfMeasure)
-		throws EmptyVectorException {
+	private Vector<? extends Measure<? extends Number>> getValues(Vector<? extends Forecast> forecasts, String nameOfMeasure) {
+
+		// il caso in cui forecasts e' vuoto e' stato gia' gestito nel costruttore.
 		
-		if(forecasts.isEmpty())
-			throw new EmptyVectorException("ERROR: Empty vector passed to Satts constructor.");
-		
-		Vector<? extends Measure<? extends Number>> values = null;
+		Vector<? extends Measure<? extends Number>> values = null; // verra' inizializato per forza in uno dei case dello switch
 		
 		switch(nameOfMeasure)
 		{
 			case "temp": {
-				if (forecasts.get(0) instanceof DailyForecast) {
+				if(forecasts.get(0) instanceof HourlyForecast) {
+					values = new Vector<InstantMeasure<Float>>();
+					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
+						((Vector<InstantMeasure<Float>>)values).add(new InstantMeasure<>(f.getTemp(), f.getDate(), f.getTime()));
+					}
+				} else if (forecasts.get(0) instanceof DailyForecast) {
 					values = new Vector<DailyMeasure<Float>>();
 					for (int i = 0; i < forecasts.size(); i++) {
 						((Vector<DailyMeasure<Float>>)values).add(new DailyMeasure<>(forecasts.get(i).getTemp(),
 																						  forecasts.get(i).getDate()));
 					}
-				} else if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Float>>();
-					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
-						((Vector<InstantMeasure<Float>>)values).add(new InstantMeasure<>(f.getTemp(), f.getDate(), f.getTime()));
-					}
-				}
+				} 
 				break;
 			}
 			
 			case "feelsLike": {
-				if (forecasts.get(0) instanceof DailyForecast) {
+				if(forecasts.get(0) instanceof HourlyForecast) {
+					values = new Vector<InstantMeasure<Float>>();
+					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
+						((Vector<InstantMeasure<Float>>)values).add(new InstantMeasure<>(f.getFeelsLike(), f.getDate(), f.getTime()));
+					}
+				} else if (forecasts.get(0) instanceof DailyForecast) {
 					values = new Vector<DailyMeasure<Float>>();
 					for (int i = 0; i < forecasts.size(); i++) {
 						((Vector<DailyMeasure<Float>>)values).add(new DailyMeasure<>(forecasts.get(i).getFeelsLike(),
 																						  forecasts.get(i).getDate()));
-					}
-				} else if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Float>>();
-					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
-						((Vector<InstantMeasure<Float>>)values).add(new InstantMeasure<>(f.getFeelsLike(), f.getDate(), f.getTime()));
 					}
 				}
 				break;
 			}
 					
 			case "humidity": {
-				if (forecasts.get(0) instanceof DailyForecast) {
+				if(forecasts.get(0) instanceof HourlyForecast) {
+					values = new Vector<InstantMeasure<Byte>>();
+					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
+						((Vector<InstantMeasure<Byte>>)values).add(new InstantMeasure<>(f.getHumidity(), f.getDate(), f.getTime()));
+					}
+				} else if (forecasts.get(0) instanceof DailyForecast) {
 					values = new Vector<DailyMeasure<Byte>>();
 					for (int i = 0; i < forecasts.size(); i++) {
 						((Vector<DailyMeasure<Byte>>)values).add(new DailyMeasure<>(forecasts.get(i).getHumidity(),
 																						  forecasts.get(i).getDate()));
-					}
-				} else if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Byte>>();
-					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
-						((Vector<InstantMeasure<Byte>>)values).add(new InstantMeasure<>(f.getHumidity(), f.getDate(), f.getTime()));
 					}
 				}
 				break;
 			}
 
 			case "wind": {
-				if (forecasts.get(0) instanceof DailyForecast) {
+				if(forecasts.get(0) instanceof HourlyForecast) {
+					values = new Vector<InstantMeasure<Short>>();
+					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
+						((Vector<InstantMeasure<Short>>)values).add(new InstantMeasure<>(f.getWind(), f.getDate(), f.getTime()));
+					}
+				} else if (forecasts.get(0) instanceof DailyForecast) {
 					values = new Vector<DailyMeasure<Short>>();
 					for (int i = 0; i < forecasts.size(); i++) {
 						((Vector<DailyMeasure<Short>>)values).add(new DailyMeasure<>(forecasts.get(i).getWind(),
 																						  forecasts.get(i).getDate()));
-					}
-				} else if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Short>>();
-					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
-						((Vector<InstantMeasure<Short>>)values).add(new InstantMeasure<>(f.getWind(), f.getDate(), f.getTime()));
 					}
 				}
 				break;
 			}
 
 			case "pressure": {
-				if (forecasts.get(0) instanceof DailyForecast) {
+				if(forecasts.get(0) instanceof HourlyForecast) {
+					values = new Vector<InstantMeasure<Short>>();
+					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
+						((Vector<InstantMeasure<Short>>)values).add(new InstantMeasure<>(f.getPressure(), f.getDate(), f.getTime()));
+					}
+				} else if (forecasts.get(0) instanceof DailyForecast) {
 					values = new Vector<DailyMeasure<Short>>();
 					for (int i = 0; i < forecasts.size(); i++) {
 						((Vector<DailyMeasure<Short>>)values).add(new DailyMeasure<>(forecasts.get(i).getPressure(),
 																						  forecasts.get(i).getDate()));
-					}
-				} else if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Short>>();
-					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
-						((Vector<InstantMeasure<Short>>)values).add(new InstantMeasure<>(f.getPressure(), f.getDate(), f.getTime()));
 					}
 				}
 				break;
 			}
 
 			case "airPoll": {
-				if (forecasts.get(0) instanceof DailyForecast) {
+				if(forecasts.get(0) instanceof HourlyForecast) {
+					values = new Vector<InstantMeasure<Short>>();
+					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
+						((Vector<InstantMeasure<Short>>)values).add(new InstantMeasure<>(f.getAirPoll(), f.getDate(), f.getTime()));
+					}
+				} else if (forecasts.get(0) instanceof DailyForecast) {
 					values = new Vector<DailyMeasure<Short>>();
 					for (int i = 0; i < forecasts.size(); i++) {
 						((Vector<DailyMeasure<Short>>)values).add(new DailyMeasure<>(forecasts.get(i).getAirPoll(),
 																						  forecasts.get(i).getDate()));
-					}
-				} else if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Short>>();
-					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
-						((Vector<InstantMeasure<Short>>)values).add(new InstantMeasure<>(f.getAirPoll(), f.getDate(), f.getTime()));
 					}
 				}
 				break;
 			}
 
 			case "clouds": {
-				if (forecasts.get(0) instanceof DailyForecast) {
+				if(forecasts.get(0) instanceof HourlyForecast) {
+					values = new Vector<InstantMeasure<Byte>>();
+					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
+						((Vector<InstantMeasure<Byte>>)values).add(new InstantMeasure<>(f.getClouds(), f.getDate(), f.getTime()));
+					}
+				} else if (forecasts.get(0) instanceof DailyForecast) {
 					values = new Vector<DailyMeasure<Byte>>();
 					for (int i = 0; i < forecasts.size(); i++) {
 						((Vector<DailyMeasure<Byte>>)values).add(new DailyMeasure<>(forecasts.get(i).getClouds(),
 																						  forecasts.get(i).getDate()));
-					}
-				} else if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Byte>>();
-					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
-						((Vector<InstantMeasure<Byte>>)values).add(new InstantMeasure<>(f.getClouds(), f.getDate(), f.getTime()));
 					}
 				}
 				break;
