@@ -6,6 +6,11 @@ public class GeoPoint {
     private double lon;
     private short alt;
 
+    GeoPoint(double lat, double lon){
+        this.lat = lat;
+        this.lon = lon;
+    }
+
     GeoPoint(double lat, double lon, short alt){
         this.lat = lat;
         this.lon = lon;
