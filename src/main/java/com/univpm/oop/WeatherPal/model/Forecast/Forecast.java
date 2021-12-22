@@ -8,14 +8,14 @@ public class Forecast {
 
     protected Weather weather;
     protected LocalDate date;
-    protected Measure<Float> temp;
-    protected Measure<Float> feelsLike;
+    protected Measure<Double> temp;
+    protected Measure<Double> feelsLike;
     protected Measure<Byte> humidity;
-    protected Measure<Short> wind;
-    protected Measure<Short> pressure;
-    protected Measure<Short> airPoll;
+    protected Measure<Integer> wind;
+    protected Measure<Integer> pressure;
+    protected AirPollution airPoll;
     protected Measure<Byte> clouds;
-    protected Measure<Float> pop;
+    protected Measure<Double> pop;
     protected Measure<Byte> uv;
 
     public Weather getWeather(){
@@ -32,17 +32,17 @@ public class Forecast {
         this.date = date;
     }
 
-    public Measure<Float> getTemp(){
+    public Measure<Double> getTemp(){
         return temp;
     }
-    public void setTemp(Measure<Float> temp) {
+    public void setTemp(Measure<Double> temp) {
         this.temp = temp;
     }
 
-    public Measure<Float> getFeelsLike(){
+    public Measure<Double> getFeelsLike(){
         return feelsLike;
     }
-    public void setFeelsLike(Measure<Float> feelsLike) {
+    public void setFeelsLike(Measure<Double> feelsLike) {
         this.feelsLike = feelsLike;
     }
 
@@ -53,24 +53,24 @@ public class Forecast {
         this.humidity = humidity;
     }
 
-    public Measure<Short> getWind(){
+    public Measure<Integer> getWind(){
         return wind;
     }
-    public void setWind(Measure<Short> wind) {
+    public void setWind(Measure<Integer> wind) {
         this.wind = wind;
     }
 
-    public Measure<Short> getPressure(){
+    public Measure<Integer> getPressure(){
         return pressure;
     }
-    public void setPressure(Measure<Short> pressure) {
+    public void setPressure(Measure<Integer> pressure) {
         this.pressure = pressure;
     }
 
-    public Measure<Short> getAirPoll(){
+    public AirPollution getAirPoll(){
         return airPoll;
     }
-    public void setAirPoll(Measure<Short> airPoll) {
+    public void setAirPoll(AirPollution airPoll) {
         this.airPoll = airPoll;
     }
 
@@ -81,10 +81,10 @@ public class Forecast {
         this.clouds = clouds;
     }
 
-    public Measure<Float> getPop(){
+    public Measure<Double> getPop(){
         return pop;
     }
-    public void setPop(Measure<Float> pop) {
+    public void setPop(Measure<Double> pop) {
         this.pop = pop;
     }
 

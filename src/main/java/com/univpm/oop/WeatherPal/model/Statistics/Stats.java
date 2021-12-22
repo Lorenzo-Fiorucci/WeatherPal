@@ -12,12 +12,12 @@ import java.util.Vector;
  */
 public class Stats {
 	
-	Population<? extends Measure<Float>> temp;
-	Population<? extends Measure<Float>> feelsLike;
+	Population<? extends Measure<Double>> temp;
+	Population<? extends Measure<Double>> feelsLike;
 	Population<? extends Measure<Byte>> humidity;
-	Population<? extends Measure<Short>> wind;
-	Population<? extends Measure<Short>> pressure;
-	Population<? extends Measure<Short>> airPoll;
+	Population<? extends Measure<Integer>> wind;
+	Population<? extends Measure<Integer>> pressure;
+	Population<? extends Measure<Integer>> airPoll;
 	Population<? extends Measure<Byte>> clouds;
 
 	/**
@@ -41,22 +41,23 @@ public class Stats {
 
 		if (forecasts.get(0) instanceof HourlyForecast)
 		{
-			temp = new Population<InstantMeasure<Float>>("Temperature");
-			feelsLike = new Population<InstantMeasure<Float>>("Feels like");
+			temp = new Population<InstantMeasure<Double>>("Temperature");
+			feelsLike = new Population<InstantMeasure<Double>>("Feels like");
 			humidity = new Population<InstantMeasure<Byte>>("Humidity");
-			wind = new Population<InstantMeasure<Short>>("Wind");
-			pressure = new Population<InstantMeasure<Short>>("Pressure");
-			airPoll = new Population<InstantMeasure<Short>>("Air pollution");
+			wind = new Population<InstantMeasure<Integer>>("Wind");
+			pressure = new Population<InstantMeasure<Integer>>("Pressure");
+			airPoll = new Population<InstantMeasure<Integer>>("Air pollution");
 			clouds = new Population<InstantMeasure<Byte>>("Clouds");
-		} 
+		}
+
 		else if (forecasts.get(0) instanceof DailyForecast)
 		{
-			temp = new Population<DailyMeasure<Float>>("Temperature");
-			feelsLike = new Population<DailyMeasure<Float>>("Feels like");
+			temp = new Population<DailyMeasure<Double>>("Temperature");
+			feelsLike = new Population<DailyMeasure<Double>>("Feels like");
 			humidity = new Population<DailyMeasure<Byte>>("Humidity");
-			wind = new Population<DailyMeasure<Short>>("Wind");
-			pressure = new Population<DailyMeasure<Short>>("Pressure");
-			airPoll = new Population<DailyMeasure<Short>>("Air pollution");
+			wind = new Population<DailyMeasure<Integer>>("Wind");
+			pressure = new Population<DailyMeasure<Integer>>("Pressure");
+			airPoll = new Population<DailyMeasure<Integer>>("Air pollution");
 			clouds = new Population<DailyMeasure<Byte>>("Clouds");
 		} 
 		
@@ -122,14 +123,14 @@ public class Stats {
 		{
 			case "temp": {
 				if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Float>>();
+					values = new Vector<InstantMeasure<Double>>();
 					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
-						((Vector<InstantMeasure<Float>>)values).add(new InstantMeasure<>(f.getTemp(), f.getDate(), f.getTime()));
+						((Vector<InstantMeasure<Double>>)values).add(new InstantMeasure<>(f.getTemp(), f.getDate(), f.getTime()));
 					}
 				} else if (forecasts.get(0) instanceof DailyForecast) {
-					values = new Vector<DailyMeasure<Float>>();
+					values = new Vector<DailyMeasure<Double>>();
 					for (int i = 0; i < forecasts.size(); i++) {
-						((Vector<DailyMeasure<Float>>)values).add(new DailyMeasure<>(forecasts.get(i).getTemp(),
+						((Vector<DailyMeasure<Double>>)values).add(new DailyMeasure<>(forecasts.get(i).getTemp(),
 																						  forecasts.get(i).getDate()));
 					}
 				} 
@@ -138,14 +139,14 @@ public class Stats {
 			
 			case "feelsLike": {
 				if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Float>>();
+					values = new Vector<InstantMeasure<Double>>();
 					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
-						((Vector<InstantMeasure<Float>>)values).add(new InstantMeasure<>(f.getFeelsLike(), f.getDate(), f.getTime()));
+						((Vector<InstantMeasure<Double>>)values).add(new InstantMeasure<>(f.getFeelsLike(), f.getDate(), f.getTime()));
 					}
 				} else if (forecasts.get(0) instanceof DailyForecast) {
-					values = new Vector<DailyMeasure<Float>>();
+					values = new Vector<DailyMeasure<Double>>();
 					for (int i = 0; i < forecasts.size(); i++) {
-						((Vector<DailyMeasure<Float>>)values).add(new DailyMeasure<>(forecasts.get(i).getFeelsLike(),
+						((Vector<DailyMeasure<Double>>)values).add(new DailyMeasure<>(forecasts.get(i).getFeelsLike(),
 																						  forecasts.get(i).getDate()));
 					}
 				}
@@ -154,7 +155,7 @@ public class Stats {
 					
 			case "humidity": {
 				if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Byte>>();
+					values =  Vector<InstantMeasure<Byte>>();
 					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
 						((Vector<InstantMeasure<Byte>>)values).add(new InstantMeasure<>(f.getHumidity(), f.getDate(), f.getTime()));
 					}
@@ -170,14 +171,14 @@ public class Stats {
 
 			case "wind": {
 				if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Short>>();
+					values = new Vector<InstantMeasure<Integer>>();
 					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
-						((Vector<InstantMeasure<Short>>)values).add(new InstantMeasure<>(f.getWind(), f.getDate(), f.getTime()));
+						((Vector<InstantMeasure<Integer>>)values).add(new InstantMeasure<>(f.getWind(), f.getDate(), f.getTime()));
 					}
 				} else if (forecasts.get(0) instanceof DailyForecast) {
-					values = new Vector<DailyMeasure<Short>>();
+					values = new Vector<DailyMeasure<Integer>>();
 					for (int i = 0; i < forecasts.size(); i++) {
-						((Vector<DailyMeasure<Short>>)values).add(new DailyMeasure<>(forecasts.get(i).getWind(),
+						((Vector<DailyMeasure<Integer>>)values).add(new DailyMeasure<>(forecasts.get(i).getWind(),
 																						  forecasts.get(i).getDate()));
 					}
 				}
@@ -186,14 +187,14 @@ public class Stats {
 
 			case "pressure": {
 				if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Short>>();
+					values = new Vector<InstantMeasure<Integer>>();
 					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
-						((Vector<InstantMeasure<Short>>)values).add(new InstantMeasure<>(f.getPressure(), f.getDate(), f.getTime()));
+						((Vector<InstantMeasure<Integer>>)values).add(new InstantMeasure<>(f.getPressure(), f.getDate(), f.getTime()));
 					}
 				} else if (forecasts.get(0) instanceof DailyForecast) {
-					values = new Vector<DailyMeasure<Short>>();
+					values = new Vector<DailyMeasure<Integer>>();
 					for (int i = 0; i < forecasts.size(); i++) {
-						((Vector<DailyMeasure<Short>>)values).add(new DailyMeasure<>(forecasts.get(i).getPressure(),
+						((Vector<DailyMeasure<Integer>>)values).add(new DailyMeasure<>(forecasts.get(i).getPressure(),
 																						  forecasts.get(i).getDate()));
 					}
 				}
@@ -202,14 +203,14 @@ public class Stats {
 
 			case "airPoll": {
 				if(forecasts.get(0) instanceof HourlyForecast) {
-					values = new Vector<InstantMeasure<Short>>();
+					values = new Vector<AirPollution>();
 					for (HourlyForecast f : (Vector<HourlyForecast>)forecasts) {
-						((Vector<InstantMeasure<Short>>)values).add(new InstantMeasure<>(f.getAirPoll(), f.getDate(), f.getTime()));
+						((Vector<AirPollution>)values).add(new AirPollution<>(f.getAirPoll(), f.getDate(), f.getTime()));
 					}
 				} else if (forecasts.get(0) instanceof DailyForecast) {
-					values = new Vector<DailyMeasure<Short>>();
+					values = new Vector<DailyMeasure<Integer>>();
 					for (int i = 0; i < forecasts.size(); i++) {
-						((Vector<DailyMeasure<Short>>)values).add(new DailyMeasure<>(forecasts.get(i).getAirPoll(),
+						((Vector<DailyMeasure<Integer>>)values).add(new DailyMeasure<>(forecasts.get(i).getAirPoll(),
 																						  forecasts.get(i).getDate()));
 					}
 				}
