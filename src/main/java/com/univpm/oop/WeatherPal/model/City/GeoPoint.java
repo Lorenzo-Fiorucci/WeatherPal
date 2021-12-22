@@ -4,17 +4,17 @@ public class GeoPoint {
 
     private double lat;
     private double lon;
-    private short alt;
+    private int alt;
 
-    GeoPoint(double lat, double lon){
-        this.lat = lat;
-        this.lon = lon;
-    }
-
-    GeoPoint(double lat, double lon, short alt){
+    public GeoPoint(double lat, double lon, int alt) {
         this.lat = lat;
         this.lon = lon;
         this.alt = alt;
+    }
+
+    public GeoPoint(double lat, double lon) {
+        this.lat = lat;
+        this.lon = lon;
     }
 
     public double getLat() {
@@ -25,7 +25,7 @@ public class GeoPoint {
         return lon;
     }
 
-    public short getAlt() {
+    public int getAlt() {
         return alt;
     }
 
@@ -37,7 +37,7 @@ public class GeoPoint {
         this.lon = lon;
     }
 
-    public void setAlt(short alt) {
+    public void setAlt(int alt) {
         this.alt = alt;
     }
 

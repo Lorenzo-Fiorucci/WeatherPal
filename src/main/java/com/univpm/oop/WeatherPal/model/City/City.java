@@ -7,7 +7,7 @@ public class City extends GeoPoint {
     private String name;
     private Forecast prevision;
 
-    City(String name, double lat, double lon, short alt) {
+    public City(String name, double lat, double lon, short alt) {
         super(lat, lon, alt);
         this.name = name;
     }
