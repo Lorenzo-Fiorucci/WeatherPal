@@ -15,7 +15,7 @@ import java.time.format.DateTimeParseException;
  */
 public class HourlyPeriod extends DailyPeriod{
 	
-	LocalTime startTime, endTime;
+	private LocalTime startTime, endTime;
 
 	/**
 	 * 

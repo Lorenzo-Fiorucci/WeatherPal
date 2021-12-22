@@ -7,7 +7,7 @@ import java.time.format.*;
 
 public class DailyPeriod {
 	
-	LocalDate startDate, endDate;
+	protected LocalDate startDate, endDate;
 
 	public DailyPeriod(LocalDate startDate, LocalDate endDate) {
 		this.startDate = startDate;
