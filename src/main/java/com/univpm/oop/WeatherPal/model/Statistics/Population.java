@@ -1,5 +1,7 @@
 package com.univpm.oop.WeatherPal.model.Statistics;
 
+import java.util.HashMap;
+
 /**
  * Class that represents a group (population) of something
  * @param T : non primitive type of the population's elements
@@ -8,7 +10,7 @@ public class Population<T> implements Fluctuating<T> {
 
 	public String name;
 	public T max, min;
-	public double avg, var, stdDev;
+	public HashMap<String,Object> avg, var, stdDev;
 
 	public Population(String name) {
 		this.name = name;
@@ -25,17 +27,17 @@ public class Population<T> implements Fluctuating<T> {
 	}
 
 	@Override
-	public double getAvg() {
+	public HashMap<String,Object> getAvg() {
 		return avg;
 	}
 
 	@Override
-	public double getVar() {
+	public HashMap<String,Object> getVar() {
 		return var;
 	}
 
 	@Override
-	public double getStdDev() {
+	public HashMap<String,Object> getStdDev() {
 		return stdDev;
 	}
 
@@ -55,15 +57,15 @@ public class Population<T> implements Fluctuating<T> {
 		this.min = min;
 	}
 
-	public void setAvg(double avg) {
+	public void setAvg(HashMap<String,Object> avg) {
 		this.avg = avg;
 	}
 
-	public void setVar(double var) {
+	public void setVar(HashMap<String,Object> var) {
 		this.var = var;
 	}
 
-	public void setStdDev(double stdDev) {
+	public void setStdDev(HashMap<String,Object> stdDev) {
 		this.stdDev = stdDev;
 	}
 

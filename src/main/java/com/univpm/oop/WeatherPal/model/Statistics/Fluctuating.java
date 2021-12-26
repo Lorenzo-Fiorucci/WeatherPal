@@ -1,5 +1,7 @@
 package com.univpm.oop.WeatherPal.model.Statistics;
 
+import java.util.HashMap;
+
 /**
  * Interface that describes a fluctuating behavior
  */
@@ -9,10 +11,10 @@ public interface Fluctuating<T> {
 
 	public T getMin();
 
-	public double getAvg();
+	public HashMap<String,Object> getAvg();
 
-	public double getVar();
+	public HashMap<String,Object> getVar();
 
-	public double getStdDev();
+	public HashMap<String,Object> getStdDev();
 
 }
