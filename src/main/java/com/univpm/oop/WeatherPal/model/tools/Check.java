@@ -1,4 +1,4 @@
-package com.univpm.oop.WeatherPal.tools;
+package com.univpm.oop.WeatherPal.model.tools;
 
 import com.univpm.oop.WeatherPal.model.Filters.HourlyPeriod;
 

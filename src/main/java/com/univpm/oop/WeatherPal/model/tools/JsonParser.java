@@ -1,4 +1,4 @@
-package com.univpm.oop.WeatherPal.tools;
+package com.univpm.oop.WeatherPal.model.tools;
 
 import com.univpm.oop.WeatherPal.model.City.GeoPoint;
 import com.univpm.oop.WeatherPal.model.Filters.HourlyPeriod;
@@ -201,7 +201,7 @@ public class JsonParser {
 		Vector<AirPollution> pollutions = new Vector<>();
 		for (JsonNode hourlyPoll : jNode.get("list")) {
 			AirPollution poll = new AirPollution();
-			poll.setIndex((byte) hourlyPoll.get("main").get("aqi").asInt());
+			poll.setIndex(hourlyPoll.get("main").get("aqi").asDouble());
 			hourlyPoll = hourlyPoll.get("components");
 			poll.setCo(hourlyPoll.get("co").asDouble());
 			poll.setNo(hourlyPoll.get("no").asDouble());
