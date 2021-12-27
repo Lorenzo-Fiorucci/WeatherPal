@@ -1,11 +1,11 @@
 package com.univpm.oop.WeatherPal.model.Statistics;
 
 import com.univpm.oop.WeatherPal.model.Measures.*;
+import com.univpm.oop.WeatherPal.model.tools.MeasuresAnalyzer;
 import com.univpm.oop.WeatherPal.exceptions.EmptyVectorException;
 import com.univpm.oop.WeatherPal.model.Filters.DailyPeriod;
 import com.univpm.oop.WeatherPal.model.Filters.HourlyPeriod;
 import com.univpm.oop.WeatherPal.model.Forecast.*;
-import com.univpm.oop.WeatherPal.tools.MeasuresAnalyzer;
 
 import java.util.*;
 import java.lang.reflect.*;

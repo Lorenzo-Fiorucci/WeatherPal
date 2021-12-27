@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import com.univpm.oop.WeatherPal.model.Forecast.AirPollution;
 import com.univpm.oop.WeatherPal.model.Measures.Measure;
-import com.univpm.oop.WeatherPal.tools.MeasuresAnalyzer;
+import com.univpm.oop.WeatherPal.model.tools.MeasuresAnalyzer;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
