@@ -1,12 +1,16 @@
 package com.univpm.oop.WeatherPal.model.Forecast;
 
+import com.univpm.oop.WeatherPal.model.JsonSerializers.AirPollutionSerializer;
 import com.univpm.oop.WeatherPal.model.Statistics.Distribution;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * Class that stores data on air composition in order to analyze air quality.
  * Its {@code index} field is a number between 1 and 5, where 1 means good quality, 5 means very poor quality.<p>
  * To be constructed with default constructor and filled through setters. 
  */
+@JsonSerialize(using = AirPollutionSerializer.class)
 public class AirPollution implements Comparable<AirPollution>, Distribution {
 	
 	private int index;

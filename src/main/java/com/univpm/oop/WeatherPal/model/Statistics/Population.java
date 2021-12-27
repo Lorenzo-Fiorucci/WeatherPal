@@ -1,11 +1,15 @@
 package com.univpm.oop.WeatherPal.model.Statistics;
 
+import com.univpm.oop.WeatherPal.model.JsonSerializers.PopulationSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.util.HashMap;
 
 /**
  * Class that represents a group (population) of something
  * @param T : non primitive type of the population's elements
  */
+@JsonSerialize(using = PopulationSerializer.class)
 public class Population<T> implements Fluctuating<T> {
 
 	public String name;

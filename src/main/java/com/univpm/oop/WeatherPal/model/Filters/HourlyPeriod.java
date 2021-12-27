@@ -2,6 +2,9 @@ package com.univpm.oop.WeatherPal.model.Filters;
 
 
 import com.univpm.oop.WeatherPal.exceptions.InvalidFormatterException;
+import com.univpm.oop.WeatherPal.model.JsonSerializers.HourlyPeriodSerializer;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,6 +16,7 @@ import java.time.format.DateTimeParseException;
  * Class that represent a period of time between two LocalDateTime objects.
  * Designed to facilitate verification of dates contained or not in a certain period.
  */
+@JsonSerialize(using = HourlyPeriodSerializer.class)
 public class HourlyPeriod extends DailyPeriod{
 	
 	private LocalTime startTime, endTime;
