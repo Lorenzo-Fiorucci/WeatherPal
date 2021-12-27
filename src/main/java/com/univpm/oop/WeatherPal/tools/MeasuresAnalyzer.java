@@ -4,14 +4,13 @@ import java.lang.Math;
 import java.util.*;
 
 import com.univpm.oop.WeatherPal.exceptions.EmptyVectorException;
-import com.univpm.oop.WeatherPal.exceptions.NotAmmittedClassesException;
 import com.univpm.oop.WeatherPal.model.Measures.Measure;
 import com.univpm.oop.WeatherPal.model.Statistics.Distribution;
 
 public class MeasuresAnalyzer {
 
-	public static <T> Measure<Comparable<T>> findMax(Vector<? extends Measure<Comparable<T>>> array)
-		throws EmptyVectorException, NotAmmittedClassesException {
+	public static <T> Measure<? extends Comparable<T>> findMax(Vector<? extends Measure<? extends Comparable<T>>> array)
+		throws EmptyVectorException {
 		
 		if(array.isEmpty())
 			throw new EmptyVectorException("ERROR: empty vector passed to findMax.");
@@ -25,8 +24,8 @@ public class MeasuresAnalyzer {
 		return array.get(maxIndex);
 	}
 
-	public static  <T> Measure<Comparable<T>> findMin(Vector<? extends Measure<Comparable<T>>> array)
-		throws EmptyVectorException, NotAmmittedClassesException {
+	public static  <T> Measure<? extends Comparable<T>> findMin(Vector<? extends Measure<? extends Comparable<T>>> array)
+		throws EmptyVectorException {
 
 		if(array.isEmpty())
 			throw new EmptyVectorException("ERROR: empty vector passed to findMin.");
