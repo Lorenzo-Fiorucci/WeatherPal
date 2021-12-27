@@ -74,7 +74,7 @@ public interface Distribution {
 		for (Map.Entry<String, Vector<E>> entry : fieldValues.entrySet()) {
 			
 			if(entry.getValue().get(0) instanceof Number)
-				toReturn.put(entry.getKey(), Math.sqrt(variance((Vector<? extends Number>)entry.getValue())));
+				toReturn.put(entry.getKey(), cut( Math.sqrt(variance((Vector<? extends Number>) entry.getValue())), (byte)4 ));
 			else
 				toReturn.put(entry.getKey(), calcStdDev((Vector<? extends Distribution>)entry.getValue()));
 		}
@@ -92,14 +92,14 @@ public interface Distribution {
 	 *		Keys (String) identify attributes' names.
 	 * 		Corresponding values (Vector) identify the values of those attributes in the elements of {@code array}.
 	 */
-	private static <E> HashMap<String, Vector<E>> getFieldValues(Vector<? extends Distribution> array) {
+	public static <E> HashMap<String, Vector<E>> getFieldValues(Vector<? extends Distribution> array) {
 		
 		HashMap<String, Vector<E>> fieldValues = new HashMap<>(); // come Vector<Vector<?>>, ma ogni Vector interno ha un nome associato
 		
 		Class<?> klazz = array.get(0).getClass();
 		Field[] fields = klazz.getDeclaredFields();
 		
-		for (int i = 0; i < array.size(); i++) {
+		for (Distribution element : array) {
 			for (Field field : fields) {
 				try {
 					Method getField = klazz.getDeclaredMethod("get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1)); //getField del field attuale
@@ -110,7 +110,7 @@ public interface Distribution {
 					else
 						toPut = fieldValues.get(field.getName());
 					
-					Object toAdd = getField.invoke(array.get(i));
+					Object toAdd = getField.invoke(element);
 					if(toAdd != null && (toAdd instanceof Number || toAdd instanceof Distribution)) { // controllo che quell'attributo non sia nullo e che estenda Number o Distribution
 						toPut.add( (E)toAdd );
 						fieldValues.put(field.getName(), toPut);
@@ -126,24 +126,37 @@ public interface Distribution {
 	/**
 	 * 
 	 * @param array : vector of {@code Number} or subclasses
-	 * @return the average of {@code array}'s elements, as a double value.
+	 * @return the average of {@code array}'s elements, as a double value with 4 decimal places.
 	 */
 	private static double average(Vector<? extends Number> array) {
 		double toReturn = 0;
 		for (Number n : array)
 			toReturn += n.doubleValue();
-		return toReturn / array.size();
+		
+		return cut(toReturn/array.size(), (byte)4);
 	}
 
 	/**
 	 * 
 	 * @param array : vector of {@code Number} or subclasses
-	 * @return the variance of {@code array}'s elements, as a double value.
+	 * @return the variance of {@code array}'s elements, as a double value with 4 decimal places.
 	 */
 	private static double variance(Vector<? extends Number> array) {
 		double toReturn = 0, avg = average(array);
 		for(Number n : array)
 			toReturn += Math.pow(n.doubleValue() - avg, 2);
-		return toReturn / array.size() - 1;
+		
+		return cut(toReturn/array.size(), (byte)4);
+	}
+
+	private static double cut(double toCut, byte decimalPlaces) {
+		double bigger = toCut * Math.pow(10, decimalPlaces);
+		long integer;
+		if(bigger < 0)
+			integer = (long) (bigger - 0.5);
+		else
+			integer = (long) (bigger + 0.5);
+		
+		return (double)integer / Math.pow(10, decimalPlaces);
 	}
 }

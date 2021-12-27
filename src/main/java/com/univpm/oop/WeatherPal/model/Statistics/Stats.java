@@ -165,7 +165,6 @@ public class Stats {
 	private <Z, T extends Measure<? extends Comparable<Z>>, X extends Number & Comparable<Z>, Y extends Distribution & Comparable<Z>>
 			void setAll(Population<T> pop, Vector<T> measures) {
 		
-		try {
 			pop.setMax((T) MeasuresAnalyzer.findMax(measures)); // findMax() e findMin() ritornano una Measure<? extends Comparable>, ma quello e' il tipo apparente
 			pop.setMin((T) MeasuresAnalyzer.findMin(measures)); // poiche' il tipo effettivo (Daily o HourlyMeasure) dipende dal vettore di misure (measures).
 			
@@ -187,11 +186,6 @@ public class Stats {
 				pop.setVar(MeasuresAnalyzer.calcDistribVar((Vector<? extends Measure<Y>>)measures));
 				pop.setStdDev(MeasuresAnalyzer.calcDistribStdDev((Vector<? extends Measure<Y>>)measures));
 			}
-		}
-		catch(EmptyVectorException e) {
-			// eccezione lanciata dai metodi di MeasuresAnalyzer, ma
-			// il caso in cui forecasts e' vuoto e' stato gia' gestito nel costruttore, prima della chiamata a questa funzione
-		}
 	}
 
 }

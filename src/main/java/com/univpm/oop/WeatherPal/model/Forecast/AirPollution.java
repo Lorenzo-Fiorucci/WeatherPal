@@ -9,13 +9,14 @@ import com.univpm.oop.WeatherPal.model.Statistics.Distribution;
  */
 public class AirPollution implements Comparable<AirPollution>, Distribution {
 	
-	private double index, co, no, no2, o3, pm10;
+	private int index;
+	private double co, no, no2, o3, pm10;
 
 	public double getIndex() {
 		return this.index;
 	}
 
-	public void setIndex(double index) {
+	public void setIndex(int index) {
 		this.index = index;
 	}
 
@@ -88,6 +89,12 @@ public class AirPollution implements Comparable<AirPollution>, Distribution {
 			toReturn = (int)(sum1 - sum2 + 0.5);
 		
 		return toReturn;
+	}
+
+	@Override
+	public String toString() {
+		return "index: " + index + " -- co: " + co + " -- no: " + no + 
+			   " -- no2: " + no2 + " -- o3: " + o3 + " -- pm10: " + pm10;
 	}
 
 }

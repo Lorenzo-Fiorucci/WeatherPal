@@ -21,9 +21,9 @@ public class DailyPeriod {
 	 * @param endDate
 	 * 		: date on which the period ends
 	 * @param dateFormat
-	 * 		: format of {@code startDate} and {@code endDate}. It must follow DateTimeFormatter's pattern conventions 
+	 * 		: format of {@code startDate} and {@code endDate}. It must follow DateTimeFormatter's pattern conventions
 	 * 		(refer to Oracle's <a href="https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html"
-	 * 		>documentation on DateTimeFormatter</a>) 
+	 * 		>documentation on DateTimeFormatter</a>)
 	 * @throws InvalidFormatterException
 	 * 		thrown if {@code dateFormat} isn't a valid pattern
 	 * @throws DateTimeParseException
@@ -56,6 +56,4 @@ public class DailyPeriod {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		return "from " + startDate.format(formatter) + " to " + endDate.format(formatter);
 	}
-
-
 }

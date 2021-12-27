@@ -12,7 +12,7 @@ import java.time.format.*;
  * 		: the concrete type for the measure value. It must be a class that extends
  * 		<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Number.html">Number</a>
  */
-public class DailyMeasure<T extends Number> extends Measure<T>{
+public class DailyMeasure<T> extends Measure<T>{
 
 	protected LocalDate date;
 
