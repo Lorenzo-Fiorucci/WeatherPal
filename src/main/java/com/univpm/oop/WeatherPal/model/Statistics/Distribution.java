@@ -145,8 +145,9 @@ public interface Distribution {
 		double toReturn = 0, avg = average(array);
 		for(Number n : array)
 			toReturn += Math.pow(n.doubleValue() - avg, 2);
-		
-		return cut(toReturn/array.size(), (byte)4);
+			
+		toReturn /= (array.size() - 1);
+		return cut(toReturn, (byte)4);
 	}
 
 	private static double cut(double toCut, byte decimalPlaces) {

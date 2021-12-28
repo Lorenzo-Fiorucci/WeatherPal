@@ -12,9 +12,9 @@ import java.util.HashMap;
 @JsonSerialize(using = PopulationSerializer.class)
 public class Population<T> implements Fluctuating<T> {
 
-	public String name;
-	public T max, min;
-	public HashMap<String,Object> avg, var, stdDev;
+	private String name;
+	private T max, min;
+	private HashMap<String,Object> avg, var, stdDev;
 
 	public Population(String name) {
 		this.name = name;

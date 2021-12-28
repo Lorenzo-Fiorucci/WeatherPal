@@ -98,21 +98,21 @@ public class AnalyzerTests {
 	@Test
 	public void test6() {
 		HashMap<String, Object> var = MeasuresAnalyzer.calcDistribVar(pollutions);
-		assertEquals(0.0267, var.get("co"));
-		assertEquals(0.0267, var.get("no"));
-		assertEquals(0.0267, var.get("no2"));
-		assertEquals(0.0267, var.get("o3"));
-		assertEquals(0.0267, var.get("pm10"));
+		assertEquals(0.04, var.get("co"));
+		assertEquals(0.04, var.get("no"));
+		assertEquals(0.04, var.get("no2"));
+		assertEquals(0.04, var.get("o3"));
+		assertEquals(0.04, var.get("pm10"));
 	}
 
 	@Test
 	public void test7() {
 		HashMap<String, Object> stdDev = MeasuresAnalyzer.calcDistribStdDev(pollutions);
-		assertEquals(0.1634, stdDev.get("co"));
-		assertEquals(0.1634, stdDev.get("no"));
-		assertEquals(0.1634, stdDev.get("no2"));
-		assertEquals(0.1634, stdDev.get("o3"));
-		assertEquals(0.1634, stdDev.get("pm10"));
+		assertEquals(0.2, stdDev.get("co"));
+		assertEquals(0.2, stdDev.get("no"));
+		assertEquals(0.2, stdDev.get("no2"));
+		assertEquals(0.2, stdDev.get("o3"));
+		assertEquals(0.2, stdDev.get("pm10"));
 	}
 	
 }
