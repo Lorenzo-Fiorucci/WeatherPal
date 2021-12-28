@@ -4,6 +4,44 @@ import java.lang.reflect.*;
 import java.util.*;
 
 public interface Distribution {
+
+	/**
+	 * 
+	 * @param array : vector of {@code Number} or subclasses
+	 * @return the average of {@code array}'s elements, as a double value with 4 decimal places.
+	 */
+	public static double simpleAvg(Vector<? extends Number> array) {
+		double toReturn = 0;
+		for (Number n : array)
+			toReturn += n.doubleValue();
+		
+		return cut(toReturn/array.size(), (byte)4);
+	}
+	
+	/**
+	 * 
+	 * @param array : vector of {@code Number} or subclasses
+	 * @return the variance of {@code array}'s elements, as a double value with 4 decimal places.
+	 */
+	public static double simpleVar(Vector<? extends Number> array) {
+		double toReturn = 0, avg = simpleAvg(array);
+		for(Number n : array)
+			toReturn += Math.pow(n.doubleValue() - avg, 2);
+			
+		toReturn /= (array.size() - 1);
+		return cut(toReturn, (byte)4);
+	}
+	
+	private static double cut(double toCut, byte decimalPlaces) {
+		double bigger = toCut * Math.pow(10, decimalPlaces);
+		long integer;
+		if(bigger < 0)
+			integer = (long) (bigger - 0.5);
+		else
+			integer = (long) (bigger + 0.5);
+		
+		return (double)integer / Math.pow(10, decimalPlaces);
+	}
 	
 	/**
 	 * Method that creates an average representation of all the objects contained in {@code array} and returns it as an hashmap. 
@@ -14,7 +52,7 @@ public interface Distribution {
 	 * @param array : a vector of objects that implement {@code Distribution} interface
 	 * @return a hashmap that represents the average of all the objects contained in {@code array}. 
 	 */
-	public static <E> HashMap<String,Object> calcAvg(Vector<? extends Distribution> array) {
+	public static <E> HashMap<String,Object> complexAvg(Vector<? extends Distribution> array) {
 		
 		HashMap<String, Object> toReturn = new HashMap<>();
 		HashMap<String, Vector<E>> fieldValues = getFieldValues(array); // non Vector<Object> perche' il compilatore vuole tutti elementi Object (e non sottoclassi)
@@ -23,9 +61,9 @@ public interface Distribution {
 		for (Map.Entry<String, Vector<E>> entry : fieldValues.entrySet()) {
 			
 			if(entry.getValue().get(0) instanceof Number)
-				toReturn.put(entry.getKey(), average((Vector<? extends Number>)entry.getValue()));
+				toReturn.put(entry.getKey(), simpleAvg((Vector<? extends Number>)entry.getValue()));
 			else
-				toReturn.put(entry.getKey(), calcAvg((Vector<? extends Distribution>)entry.getValue()));
+				toReturn.put(entry.getKey(), complexAvg((Vector<? extends Distribution>)entry.getValue()));
 		}
 		return toReturn;
 	}
@@ -40,7 +78,7 @@ public interface Distribution {
 	 * @param array : a vector of objects that implement {@code Distribution} interface
 	 * @return a hashmap that represents the variance of all the objects contained in {@code array}. 
 	 */
-	public static <E> HashMap<String,Object> calcVar(Vector<? extends Distribution> array) {
+	public static <E> HashMap<String,Object> complexVar(Vector<? extends Distribution> array) {
 
 		HashMap<String, Object> toReturn = new HashMap<>();
 		HashMap<String, Vector<E>> fieldValues = getFieldValues(array);
@@ -48,9 +86,9 @@ public interface Distribution {
 		for (Map.Entry<String, Vector<E>> entry : fieldValues.entrySet()) {
 			
 			if(entry.getValue().get(0) instanceof Number)
-				toReturn.put(entry.getKey(), variance((Vector<? extends Number>)entry.getValue()));
+				toReturn.put(entry.getKey(), simpleVar((Vector<? extends Number>)entry.getValue()));
 			else
-				toReturn.put(entry.getKey(), calcVar((Vector<? extends Distribution>)entry.getValue()));
+				toReturn.put(entry.getKey(), complexVar((Vector<? extends Distribution>)entry.getValue()));
 		}
 		return toReturn;
 
@@ -66,7 +104,7 @@ public interface Distribution {
 	 * @param array : a vector of objects that implement {@code Distribution} interface
 	 * @return a hashmap that represents the standard deviation of all the objects contained in {@code array}. 
 	 */
-	public static <E> HashMap<String,Object> calcStdDev(Vector<? extends Distribution> array) {
+	public static <E> HashMap<String,Object> complexStdDev(Vector<? extends Distribution> array) {
 
 		HashMap<String, Object> toReturn = new HashMap<>();
 		HashMap<String, Vector<E>> fieldValues = getFieldValues(array);
@@ -74,9 +112,9 @@ public interface Distribution {
 		for (Map.Entry<String, Vector<E>> entry : fieldValues.entrySet()) {
 			
 			if(entry.getValue().get(0) instanceof Number)
-				toReturn.put(entry.getKey(), cut( Math.sqrt(variance((Vector<? extends Number>) entry.getValue())), (byte)4 ));
+				toReturn.put(entry.getKey(), cut( Math.sqrt(simpleVar((Vector<? extends Number>) entry.getValue())), (byte)4 ));
 			else
-				toReturn.put(entry.getKey(), calcStdDev((Vector<? extends Distribution>)entry.getValue()));
+				toReturn.put(entry.getKey(), complexStdDev((Vector<? extends Distribution>)entry.getValue()));
 		}
 		return toReturn;
 
@@ -125,39 +163,33 @@ public interface Distribution {
 
 	/**
 	 * 
-	 * @param array : vector of {@code Number} or subclasses
-	 * @return the average of {@code array}'s elements, as a double value with 4 decimal places.
+	 * @param klazz : referece class
+	 * @return a {@code Field} array containing all the attribbutes of {@code klazz} class, even those inherited
 	 */
-	private static double average(Vector<? extends Number> array) {
-		double toReturn = 0;
-		for (Number n : array)
-			toReturn += n.doubleValue();
+	private Field[] getVisibleFields(Class<?> klazz) {
 		
-		return cut(toReturn/array.size(), (byte)4);
-	}
+		Field[] thisFields = klazz.getDeclaredFields();
+		
+		while(!klazz.getSuperclass().equals(Object.class)) {
+		
+			Field[] superFields = klazz.getSuperclass().getDeclaredFields();
+			Field[] allFields = new Field[thisFields.length + superFields.length];
 
-	/**
-	 * 
-	 * @param array : vector of {@code Number} or subclasses
-	 * @return the variance of {@code array}'s elements, as a double value with 4 decimal places.
-	 */
-	private static double variance(Vector<? extends Number> array) {
-		double toReturn = 0, avg = average(array);
-		for(Number n : array)
-			toReturn += Math.pow(n.doubleValue() - avg, 2);
+			for(int i = 0; i < thisFields.length; i++)
+				allFields[i] = thisFields[i];
 			
-		toReturn /= (array.size() - 1);
-		return cut(toReturn, (byte)4);
+			for(int i = thisFields.length; i < allFields.length; i++) {
+				if(Modifier.isPublic(superFields[i - thisFields.length].getModifiers()) || Modifier.isProtected(superFields[i - thisFields.length].getModifiers()))
+					allFields[i] = superFields[i - thisFields.length];
+			}
+			
+			thisFields = new Field[allFields.length];
+			for (int i = 0; i < allFields.length; i++) // thisField becomes the same as allFields
+				thisFields[i] = allFields[i];
+			
+			klazz = klazz.getSuperclass(); //klazz turns into its superclass
+		}
+		return thisFields;
 	}
 
-	private static double cut(double toCut, byte decimalPlaces) {
-		double bigger = toCut * Math.pow(10, decimalPlaces);
-		long integer;
-		if(bigger < 0)
-			integer = (long) (bigger - 0.5);
-		else
-			integer = (long) (bigger + 0.5);
-		
-		return (double)integer / Math.pow(10, decimalPlaces);
-	}
 }

@@ -1,10 +1,10 @@
 package com.univpm.oop.WeatherPal.model.tools;
 
-import java.lang.Math;
-import java.util.*;
-
 import com.univpm.oop.WeatherPal.model.Measures.Measure;
 import com.univpm.oop.WeatherPal.model.Statistics.Distribution;
+
+import java.util.*;
+import java.lang.Math;
 
 public class MeasuresAnalyzer {
 
@@ -35,10 +35,9 @@ public class MeasuresAnalyzer {
 	 * @param array : vector of {@code Measure} (or subclasses) of {@code Number} (or subclasses)
 	 * @return the average of the values of {@code array}'s measures, as a double
 	 */
-	public static double calcNumAvg(Vector<? extends Measure<? extends Number>> array) {
+	public static double numAvg(Vector<? extends Measure<? extends Number>> array) {
 		
-		Vector<? extends Number> values = getValues(array);
-		return average(values);
+		return Distribution.simpleAvg(getValues(array));
 	}
 
 	/**
@@ -46,10 +45,9 @@ public class MeasuresAnalyzer {
 	 * @param array : vector of {@code Measure} (or subclasses) of {@code Number} (or subclasses)
 	 * @return the varince of the values of {@code array}'s measures, as a double
 	 */
-	public static double calcNumVar(Vector<? extends Measure<? extends Number>> array) {
+	public static double numVar(Vector<? extends Measure<? extends Number>> array) {
 		
-		Vector<? extends Number> values = getValues(array);
-		return variance(values);
+		return Distribution.simpleVar(getValues(array));
 	}
 
 	/**
@@ -57,10 +55,9 @@ public class MeasuresAnalyzer {
 	 * @param array : vector of {@code Measure} (or subclasses) of {@code Number} (or subclasses)
 	 * @return the standard deviation of the values of {@code array}'s measures, as a double
 	 */
-	public static double calcNumStdDev(Vector<? extends Measure<? extends Number>> array) {
+	public static double numStdDev(Vector<? extends Measure<? extends Number>> array) {
 		
-		Vector<? extends Number> values = getValues(array);
-		return Math.sqrt(variance(values));
+		return Math.sqrt(Distribution.simpleVar(getValues(array)));
 	}
 
 	/**
@@ -75,10 +72,9 @@ public class MeasuresAnalyzer {
 	 * 		that implements {@code Distribution} interface
 	 * @return a hashmap that represents the average of the values of all the measures contained in {@code array}. 
 	 */
-	public static HashMap<String, Object> calcDistribAvg(Vector<? extends Measure<? extends Distribution>> array) {
+	public static HashMap<String, Object> distribAvg(Vector<? extends Measure<? extends Distribution>> array) {
 		
-		Vector<? extends Distribution> values = getValues(array);
-		return Distribution.calcAvg(values);
+		return Distribution.complexAvg(getValues(array));
 	}
 
 
@@ -94,10 +90,9 @@ public class MeasuresAnalyzer {
 	 * 		that implements {@code Distribution} interface
 	 * @return a hashmap that represents the variance of the values of all the measures contained in {@code array}. 
 	 */
-	public static HashMap<String, Object> calcDistribVar(Vector<? extends Measure<? extends Distribution>> array) {
+	public static HashMap<String, Object> distribVar(Vector<? extends Measure<? extends Distribution>> array) {
 		
-		Vector<? extends Distribution> values = getValues(array);
-		return Distribution.calcVar(values);
+		return Distribution.complexVar(getValues(array));
 	}
 
 
@@ -113,39 +108,9 @@ public class MeasuresAnalyzer {
 	 * 		that implements {@code Distribution} interface
 	 * @return a hashmap that represents the standard deviation of the values of all the measures contained in {@code array}. 
 	 */
-	public static HashMap<String, Object> calcDistribStdDev(Vector<? extends Measure<? extends Distribution>> array) {
+	public static HashMap<String, Object> distribStdDev(Vector<? extends Measure<? extends Distribution>> array) {
 		
-		Vector<? extends Distribution> values = getValues(array);
-		return Distribution.calcStdDev(values);
-	}
-
-	
-	/**
-	 * 
-	 * @param array : vector of {@code Number} or subclasses
-	 * @return the average of {@code array}'s elements, as a double value.
-	 */
-	private static double average(Vector<? extends Number> array) {
-
-		double toReturn = 0;
-		for (Number n : array)
-			toReturn += n.doubleValue();
-		
-			return toReturn / array.size();
-	}
-
-	/**
-	 * 
-	 * @param array : vector of {@code Number} or subclasses
-	 * @return the variance of {@code array}'s elements, as a double value.
-	 */
-	private static double variance(Vector<? extends Number> array) {
-		
-		double toReturn = 0, avg = average(array);
-		for (Number n : array)
-			toReturn += Math.pow(n.doubleValue() - avg, 2);
-		
-		return toReturn /= array.size() - 1;
+		return Distribution.complexStdDev(getValues(array));
 	}
 
 	private static <T> Vector<T> getValues(Vector<? extends Measure<T>> array) {
@@ -156,62 +121,5 @@ public class MeasuresAnalyzer {
 		
 		return values;
 	}
-
-	/**
-	 * 
-	 * @param <T> T : class of measures' values of {@code array}
-	 * @param array : vector of {@code Measure} (or subclasses) of T
-	 * @return 
-	 * 		the average of the objects that correspond to 'value' field of {@code array}'s measures. It's an object of the generic
-	 * 		type {@code T} and its fields are the average of corresponding fields in each {@code value} attribute of {@code array}'s measures
-	 * @throws EmptyVectorException
-	 * 		if {@code array} is empty
-	 * @throws NotAmmittedClassesException
-	 * 		if {@code T} isn't AirPollution
-	 */
-/*	public static <T> T calcObjAvg(Vector<? extends Measure<T>> array) throws EmptyVectorException, NotAmmittedClassesException {
-		
-		if(array.isEmpty())
-			throw new EmptyVectorException("ERROE: empty vector passed to calcObjAvg.");
-
-		if(array.get(0).getValue() instanceof AirPollution) { // controllo se il tipo effettivo di T e' AirPollution
-			
-			Vector<AirPollution> pollutions = new Vector<>();
-			for (Measure<T> m : array) {
-				pollutions.add((AirPollution) m.getValue()); // ha senso perche' m.getValue() ritorna un T, che ha come tipo effettivo AirPollution
-			}
-			return (T) AirPollAnalyzer.calcAvg(pollutions);
-		}
-		else throw new NotAmmittedClassesException("Can't calculate the average of measures of the given class");
-	}
-*/
-	/**
-	 * 
-	 * @param <T> T : class of measures' values of {@code array}
-	 * @param array : vector of {@code Measure} (or subclasses) of T
-	 * @return
-	 * 		the variance of the objects that correspond to 'value' field of {@code array}'s measures. It's an object of the generic
-	 * 		type {@code T} and its fields are the variance of corresponding fields in each {@code value} attribute of {@code array}'s measures
-	 * @throws EmptyVectorException
-	 * 		if {@code array} is empty
-	 * @throws NotAmmittedClassesException
-	 * 		if {@code T} isn't AirPollution
-	 */
-/*	public static <T> T calcObjVar(Vector<? extends Measure<T>> array) throws EmptyVectorException, NotAmmittedClassesException {
-		
-		if(array.isEmpty())
-			throw new EmptyVectorException("ERROE: empty vector passed to calcObjVar.");
-
-			if(array.get(0).getValue() instanceof AirPollution) { // controllo se il tipo effettivo di T e' AirPollution
-			
-			Vector<AirPollution> pollutions = new Vector<>();
-			for (Measure<T> m : array) {
-				pollutions.add((AirPollution) m.getValue()); // ha senso perche' m.getValue() ritorna un T, che ha come tipo effettivo AirPollution
-			}
-			return (T) AirPollAnalyzer.calcVar(pollutions);
-		}
-		else throw new NotAmmittedClassesException("Can't calculate the variance of measures of the given class");
-	}
-*/
 	
 }
