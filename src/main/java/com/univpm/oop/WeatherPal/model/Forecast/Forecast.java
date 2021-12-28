@@ -13,7 +13,7 @@ public class Forecast {
     protected Measure<Byte> humidity;
     protected Measure<Integer> wind;
     protected Measure<Integer> pressure;
-    protected AirPollution airPoll;
+    protected Measure<AirPollution> airPoll;
     protected Measure<Byte> clouds;
     protected Measure<Double> pop;
     protected Measure<Byte> uv;
@@ -67,10 +67,10 @@ public class Forecast {
         this.pressure = pressure;
     }
 
-    public AirPollution getAirPoll(){
+    public Measure<AirPollution> getAirPoll(){
         return airPoll;
     }
-    public void setAirPoll(AirPollution airPoll) {
+    public void setAirPoll(Measure<AirPollution> airPoll) {
         this.airPoll = airPoll;
     }
 
