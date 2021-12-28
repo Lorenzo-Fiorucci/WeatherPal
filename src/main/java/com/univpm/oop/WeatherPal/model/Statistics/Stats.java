@@ -2,10 +2,12 @@ package com.univpm.oop.WeatherPal.model.Statistics;
 
 import com.univpm.oop.WeatherPal.model.Measures.*;
 import com.univpm.oop.WeatherPal.model.tools.MeasuresAnalyzer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.univpm.oop.WeatherPal.exceptions.EmptyVectorException;
 import com.univpm.oop.WeatherPal.model.Filters.DailyPeriod;
 import com.univpm.oop.WeatherPal.model.Filters.HourlyPeriod;
 import com.univpm.oop.WeatherPal.model.Forecast.*;
+import com.univpm.oop.WeatherPal.model.JsonSerializers.StatsSerializer;
 
 import java.util.*;
 import java.lang.reflect.*;
@@ -14,16 +16,17 @@ import java.time.*;
 /**
  * Class that stores all the statistics of a set of forecast events
  */
+@JsonSerialize(using = StatsSerializer.class)
 public class Stats {
 	
-	Population<? extends Measure<Double>> temp;
-	Population<? extends Measure<Double>> feelsLike;
-	Population<? extends Measure<Byte>> humidity;
-	Population<? extends Measure<Integer>> wind;
-	Population<? extends Measure<Integer>> pressure;
-	Population<? extends Measure<Byte>> clouds;
-	Population<? extends Measure<AirPollution>> airPoll;
-	DailyPeriod period;
+	private Population<? extends Measure<Double>> temp;
+	private Population<? extends Measure<Double>> feelsLike;
+	private Population<? extends Measure<Byte>> humidity;
+	private Population<? extends Measure<Integer>> wind;
+	private Population<? extends Measure<Integer>> pressure;
+	private Population<? extends Measure<Byte>> clouds;
+	private Population<? extends Measure<AirPollution>> airPoll;
+	private DailyPeriod period;
 
 	/**
 	 * Constructs a stats object containing all the statistics on a set of {@code Forecast} (or subclasses), 
@@ -108,7 +111,7 @@ public class Stats {
 		// il caso in cui forecasts e' vuoto e' stato gia' gestito, nella prima riga del costruttore
 		
 		Class<? extends Forecast> klazz = forecasts.get(0).getClass();
-		Field[] fields = klazz.getDeclaredFields();
+		Field[] fields = getVisibleFields(klazz);
 		
 		HashMap<String,Vector<E>> measuresMap = new HashMap<>();
 		
@@ -124,7 +127,17 @@ public class Stats {
 			for(Field field : fields) {
 				if(field.getType().getSimpleName().equals("Measure") && !field.getName().equals("pop") && !field.getName().equals("uv")) {
 					try {
-						Method getField = klazz.getDeclaredMethod("get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1));
+						String getterName = "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+						Method getField = null;
+						try {
+							getField = klazz.getDeclaredMethod(getterName);
+						} catch (NoSuchMethodException e) {
+							try {
+								getField = klazz.getSuperclass().getDeclaredMethod(getterName);
+							} catch (NoSuchMethodException e1) {
+								System.out.println(e1);
+							}
+						}
 						Measure<T> newMeasure;
 						if(time != null)
 							newMeasure = new InstantMeasure<T>((Measure<T>)getField.invoke(forecast), date, time);
@@ -143,8 +156,6 @@ public class Stats {
 						
 						 measuresMap.put(field.getName(), toPut);
 					
-					} catch (NoSuchMethodException e) {
-						System.out.println(e);
 					} catch (IllegalAccessException | InvocationTargetException e) {
 						System.out.println(e);
 					}
@@ -165,27 +176,76 @@ public class Stats {
 	private <Z, T extends Measure<? extends Comparable<Z>>, X extends Number & Comparable<Z>, Y extends Distribution & Comparable<Z>>
 			void setAll(Population<T> pop, Vector<T> measures) {
 		
-			pop.setMax((T) MeasuresAnalyzer.findMax(measures)); // findMax() e findMin() ritornano una Measure<? extends Comparable>, ma quello e' il tipo apparente
-			pop.setMin((T) MeasuresAnalyzer.findMin(measures)); // poiche' il tipo effettivo (Daily o HourlyMeasure) dipende dal vettore di misure (measures).
+		pop.setMax((T) MeasuresAnalyzer.findMax(measures)); // findMax() e findMin() ritornano una Measure<? extends Comparable>, ma quello e' il tipo apparente
+		pop.setMin((T) MeasuresAnalyzer.findMin(measures)); // poiche' il tipo effettivo (Daily o HourlyMeasure) dipende dal vettore di misure (measures).
+		
+		if(measures.get(0).getValue() instanceof Number) { // se measures e' vettore di misure con valori che estendono Number (oltre che implementare Comparable)
 			
-			if(measures.get(0).getValue() instanceof Number) { // se measures e' vettore di misure con valori che estendono Number (oltre che implementare Comparable)
-				
-				HashMap<String, Object> toSet = new HashMap<>();
-				toSet.put("value", MeasuresAnalyzer.calcNumAvg((Vector<? extends Measure<X>>) measures)); 
-				pop.setAvg(toSet);
-				
-				toSet.put("value", MeasuresAnalyzer.calcNumVar((Vector<? extends Measure<X>>) measures));
-				pop.setVar(toSet);
-				
-				toSet.put("value", MeasuresAnalyzer.calcNumStdDev((Vector<? extends Measure<X>>) measures));
-				pop.setVar(toSet);
-			}
-			else if (measures.get(0).getValue() instanceof Distribution) { // se measures e' vettore di misure che implementano Distribution (oltre che Comparable) 
-				
-				pop.setAvg(MeasuresAnalyzer.calcDistribAvg((Vector<? extends Measure<Y>>)measures));
-				pop.setVar(MeasuresAnalyzer.calcDistribVar((Vector<? extends Measure<Y>>)measures));
-				pop.setStdDev(MeasuresAnalyzer.calcDistribStdDev((Vector<? extends Measure<Y>>)measures));
-			}
+			HashMap<String, Object> toSet = new HashMap<>();
+			toSet.put("value", MeasuresAnalyzer.calcNumAvg((Vector<? extends Measure<X>>) measures)); 
+			pop.setAvg(toSet);
+			
+			toSet.put("value", MeasuresAnalyzer.calcNumVar((Vector<? extends Measure<X>>) measures));
+			pop.setVar(toSet);
+			
+			toSet.put("value", MeasuresAnalyzer.calcNumStdDev((Vector<? extends Measure<X>>) measures));
+			pop.setVar(toSet);
+		}
+		else if (measures.get(0).getValue() instanceof Distribution) { // se measures e' vettore di misure che implementano Distribution (oltre che Comparable) 
+			
+			pop.setAvg(MeasuresAnalyzer.calcDistribAvg((Vector<? extends Measure<Y>>)measures));
+			pop.setVar(MeasuresAnalyzer.calcDistribVar((Vector<? extends Measure<Y>>)measures));
+			pop.setStdDev(MeasuresAnalyzer.calcDistribStdDev((Vector<? extends Measure<Y>>)measures));
+		}
+	}
+
+	private Field[] getVisibleFields(Class<?> klazz) {
+		
+		Field[] thisFields = klazz.getDeclaredFields();
+		Field[] superFields = klazz.getSuperclass().getDeclaredFields();
+		Field[] fields = new Field[thisFields.length + superFields.length];
+
+		for(int i = 0; i < thisFields.length; i++)
+			fields[i] = thisFields[i];
+		
+		for(int i = thisFields.length; i < fields.length; i++) {
+			if(Modifier.isPublic(superFields[i - thisFields.length].getModifiers()) || Modifier.isProtected(superFields[i - thisFields.length].getModifiers()))
+				fields[i] = superFields[i - thisFields.length];
+		}
+		return fields;
+	}
+
+
+	public Population<? extends Measure<Double>> getTemp() {
+		return this.temp;
+	}
+
+	public Population<? extends Measure<Double>> getFeelsLike() {
+		return this.feelsLike;
+	}
+
+	public Population<? extends Measure<Byte>> getHumidity() {
+		return this.humidity;
+	}
+
+	public Population<? extends Measure<Integer>> getWind() {
+		return this.wind;
+	}
+
+	public Population<? extends Measure<Integer>> getPressure() {
+		return this.pressure;
+	}
+
+	public Population<? extends Measure<Byte>> getClouds() {
+		return this.clouds;
+	}
+
+	public Population<? extends Measure<AirPollution>> getAirPoll() {
+		return this.airPoll;
+	}
+
+	public DailyPeriod getPeriod() {
+		return this.period;
 	}
 
 }

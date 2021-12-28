@@ -1,6 +1,7 @@
 package com.univpm.oop.WeatherPal.model.Measures;
 
-import com.univpm.oop.WeatherPal.model.Statistics.Distribution;
+import com.univpm.oop.WeatherPal.model.JsonSerializers.MeasureSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * Class that represents a generic measure
@@ -8,6 +9,7 @@ import com.univpm.oop.WeatherPal.model.Statistics.Distribution;
  * 		: the concrete type for the measure value. It must be a class that extends
  * 		<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Number.html">Number</a>
  */
+@JsonSerialize(using = MeasureSerializer.class)
 public class Measure<T> {
 
 	protected T value;
