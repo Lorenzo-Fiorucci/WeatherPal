@@ -1,10 +1,5 @@
 package com.univpm.oop.WeatherPal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.HashMap;
-import java.util.Vector;
-
 import com.univpm.oop.WeatherPal.model.Forecast.AirPollution;
 import com.univpm.oop.WeatherPal.model.Measures.Measure;
 import com.univpm.oop.WeatherPal.model.tools.MeasuresAnalyzer;
@@ -14,6 +9,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.HashMap;
+import java.util.Vector;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class AnalyzerTests {
@@ -63,17 +62,17 @@ public class AnalyzerTests {
 	public void test1() {
 		assertEquals("value: 40", MeasuresAnalyzer.findMax(vett).toString());
 		assertEquals("value: 10", MeasuresAnalyzer.findMin(vett).toString());
-		assertEquals(25, MeasuresAnalyzer.calcNumAvg(vett));
+		assertEquals(25, MeasuresAnalyzer.numAvg(vett));
 	}
 
 	@Test
 	public void test2() {
-		assertEquals(160, MeasuresAnalyzer.calcNumVar(vett));
+		assertEquals(160, MeasuresAnalyzer.numVar(vett));
 	}
 
 	@Test
 	public void test3() {
-		assertEquals(13, MeasuresAnalyzer.calcNumStdDev(vett));
+		assertEquals(13, MeasuresAnalyzer.numStdDev(vett));
 	}
 
 	@Test 
@@ -87,7 +86,7 @@ public class AnalyzerTests {
 
 	@Test
 	public void test5() {
-		HashMap<String, Object> avg = MeasuresAnalyzer.calcDistribAvg(pollutions);
+		HashMap<String, Object> avg = MeasuresAnalyzer.distribAvg(pollutions);
 		assertEquals(2.5, avg.get("co"));
 		assertEquals(0.5, avg.get("no"));
 		assertEquals(2.2, avg.get("no2"));
@@ -97,7 +96,7 @@ public class AnalyzerTests {
 
 	@Test
 	public void test6() {
-		HashMap<String, Object> var = MeasuresAnalyzer.calcDistribVar(pollutions);
+		HashMap<String, Object> var = MeasuresAnalyzer.distribVar(pollutions);
 		assertEquals(0.04, var.get("co"));
 		assertEquals(0.04, var.get("no"));
 		assertEquals(0.04, var.get("no2"));
@@ -107,7 +106,7 @@ public class AnalyzerTests {
 
 	@Test
 	public void test7() {
-		HashMap<String, Object> stdDev = MeasuresAnalyzer.calcDistribStdDev(pollutions);
+		HashMap<String, Object> stdDev = MeasuresAnalyzer.distribStdDev(pollutions);
 		assertEquals(0.2, stdDev.get("co"));
 		assertEquals(0.2, stdDev.get("no"));
 		assertEquals(0.2, stdDev.get("no2"));

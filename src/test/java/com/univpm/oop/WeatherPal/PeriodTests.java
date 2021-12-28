@@ -1,17 +1,16 @@
 package com.univpm.oop.WeatherPal;
 
+import com.univpm.oop.WeatherPal.exceptions.*;
+import com.univpm.oop.WeatherPal.model.Filters.*;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import com.univpm.oop.WeatherPal.exceptions.*;
-import com.univpm.oop.WeatherPal.model.Filters.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
