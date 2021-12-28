@@ -94,8 +94,44 @@ public class Stats {
 			setAll((Population<DailyMeasure<AirPollution>>) airPoll, (Vector<DailyMeasure<AirPollution>>) measuresMap.get("airPoll"));
 		}
 	}
-
 	
+
+	/**
+	 * 
+	 * @param <Z> Z : whatever class
+	 * @param <T> T : class that extends a {@code Measure} of some value that implements {@code Comparable} interface
+	 * @param pop : {@code Population} of {@code T} to be completely set (set max, min, average, variance, standard deviation)
+	 * @param measures : vector of {@code T} that contains the data on which calculate max, min, average,variance and standard deviation
+	 */
+	private <Z, T extends Measure<? extends Comparable<Z>>, X extends Number & Comparable<Z>, Y extends Distribution & Comparable<Z>>
+			void setAll(Population<T> pop, Vector<T> measures) {
+		
+		pop.setMax((T) MeasuresAnalyzer.findMax(measures)); // findMax() e findMin() ritornano una Measure<? extends Comparable>, ma quello e' il tipo apparente
+		pop.setMin((T) MeasuresAnalyzer.findMin(measures)); // poiche' il tipo effettivo (Daily o HourlyMeasure) dipende dal vettore di misure (measures).
+		
+		if(measures.get(0).getValue() instanceof Number) { // se measures e' vettore di misure con valori che estendono Number (oltre che implementare Comparable)
+			
+			HashMap<String, Object> avg = new HashMap<>();
+			avg.put("value", MeasuresAnalyzer.numAvg((Vector<? extends Measure<X>>) measures)); 
+			pop.setAvg(avg);
+			
+			HashMap<String, Object> var = new HashMap<>();
+			var.put("value", MeasuresAnalyzer.numVar((Vector<? extends Measure<X>>) measures));
+			pop.setVar(var);
+			
+			HashMap<String, Object> stdDev = new HashMap<>();
+			stdDev.put("value", MeasuresAnalyzer.numStdDev((Vector<? extends Measure<X>>) measures));
+			pop.setStdDev(stdDev);
+		}
+		else if (measures.get(0).getValue() instanceof Distribution) { // se measures e' vettore di misure che implementano Distribution (oltre che Comparable) 
+			
+			pop.setAvg(MeasuresAnalyzer.distribAvg((Vector<? extends Measure<Y>>)measures));
+			pop.setVar(MeasuresAnalyzer.distribVar((Vector<? extends Measure<Y>>)measures));
+			pop.setStdDev(MeasuresAnalyzer.distribStdDev((Vector<? extends Measure<Y>>)measures));
+		}
+	}
+	
+
 	/**
 	 * @param <E> E : 
 	 * 		{@code InstantMeasure} if {@code forecasts} is a vector of {@code HourlyForecast}, 
@@ -128,16 +164,7 @@ public class Stats {
 				if(field.getType().getSimpleName().equals("Measure") && !field.getName().equals("pop") && !field.getName().equals("uv")) {
 					try {
 						String getterName = "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-						Method getField = null;
-						try {
-							getField = klazz.getDeclaredMethod(getterName);
-						} catch (NoSuchMethodException e) {
-							try {
-								getField = klazz.getSuperclass().getDeclaredMethod(getterName);
-							} catch (NoSuchMethodException e1) {
-								System.out.println(e1);
-							}
-						}
+						Method getField = getVisibleMethod(klazz, getterName); // getter del field attuale
 						Measure<T> newMeasure;
 						if(time != null)
 							newMeasure = new InstantMeasure<T>((Measure<T>)getField.invoke(forecast), date, time);
@@ -156,7 +183,7 @@ public class Stats {
 						
 						 measuresMap.put(field.getName(), toPut);
 					
-					} catch (IllegalAccessException | InvocationTargetException e) {
+					} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 						System.out.println(e);
 					}
 				}
@@ -165,56 +192,63 @@ public class Stats {
 		return measuresMap;
 	}
 
-
 	/**
 	 * 
-	 * @param <Z> Z : whatever class
-	 * @param <T> T : class that extends a {@code Measure} of some value that implements {@code Comparable} interface
-	 * @param pop : {@code Population} of {@code T} to be completely set (set max, min, average, variance, standard deviation)
-	 * @param measures : vector of {@code T} that contains the data on which calculate max, min, average,variance and standard deviation
+	 * @param klazz : referece class
+	 * @return a {@code Field} array containing all the attribbutes of {@code klazz} class, even those inherited
 	 */
-	private <Z, T extends Measure<? extends Comparable<Z>>, X extends Number & Comparable<Z>, Y extends Distribution & Comparable<Z>>
-			void setAll(Population<T> pop, Vector<T> measures) {
-		
-		pop.setMax((T) MeasuresAnalyzer.findMax(measures)); // findMax() e findMin() ritornano una Measure<? extends Comparable>, ma quello e' il tipo apparente
-		pop.setMin((T) MeasuresAnalyzer.findMin(measures)); // poiche' il tipo effettivo (Daily o HourlyMeasure) dipende dal vettore di misure (measures).
-		
-		if(measures.get(0).getValue() instanceof Number) { // se measures e' vettore di misure con valori che estendono Number (oltre che implementare Comparable)
-			
-			HashMap<String, Object> toSet = new HashMap<>();
-			toSet.put("value", MeasuresAnalyzer.calcNumAvg((Vector<? extends Measure<X>>) measures)); 
-			pop.setAvg(toSet);
-			
-			toSet.put("value", MeasuresAnalyzer.calcNumVar((Vector<? extends Measure<X>>) measures));
-			pop.setVar(toSet);
-			
-			toSet.put("value", MeasuresAnalyzer.calcNumStdDev((Vector<? extends Measure<X>>) measures));
-			pop.setVar(toSet);
-		}
-		else if (measures.get(0).getValue() instanceof Distribution) { // se measures e' vettore di misure che implementano Distribution (oltre che Comparable) 
-			
-			pop.setAvg(MeasuresAnalyzer.calcDistribAvg((Vector<? extends Measure<Y>>)measures));
-			pop.setVar(MeasuresAnalyzer.calcDistribVar((Vector<? extends Measure<Y>>)measures));
-			pop.setStdDev(MeasuresAnalyzer.calcDistribStdDev((Vector<? extends Measure<Y>>)measures));
-		}
-	}
-
 	private Field[] getVisibleFields(Class<?> klazz) {
 		
 		Field[] thisFields = klazz.getDeclaredFields();
-		Field[] superFields = klazz.getSuperclass().getDeclaredFields();
-		Field[] fields = new Field[thisFields.length + superFields.length];
-
-		for(int i = 0; i < thisFields.length; i++)
-			fields[i] = thisFields[i];
 		
-		for(int i = thisFields.length; i < fields.length; i++) {
-			if(Modifier.isPublic(superFields[i - thisFields.length].getModifiers()) || Modifier.isProtected(superFields[i - thisFields.length].getModifiers()))
-				fields[i] = superFields[i - thisFields.length];
+		while(!klazz.getSuperclass().equals(Object.class)) { // finche' la superclasse non e' object, aggiungi i suoi campi public o protected
+		
+			Field[] superFields = klazz.getSuperclass().getDeclaredFields();
+			Field[] allFields = new Field[thisFields.length + superFields.length];
+
+			for(int i = 0; i < thisFields.length; i++)
+				allFields[i] = thisFields[i];
+			
+			for(int i = thisFields.length; i < allFields.length; i++) {
+				if(Modifier.isPublic(superFields[i - thisFields.length].getModifiers()) || Modifier.isProtected(superFields[i - thisFields.length].getModifiers()))
+					allFields[i] = superFields[i - thisFields.length];
+			}
+			
+			thisFields = new Field[allFields.length];
+			for (int i = 0; i < allFields.length; i++) // thisField diventa uguale a allFields
+				thisFields[i] = allFields[i];		   //
+			
+			klazz = klazz.getSuperclass(); // klazz diventa la sua superclasse
 		}
-		return fields;
+		return thisFields;
 	}
 
+	private Method getVisibleMethod(Class<?> klazz, String methodName) throws NoSuchMethodException {
+
+		Method toReturn = null;
+		boolean inCatch = true;
+		Class<?> actualClass = klazz;
+		
+		while(!actualClass.equals(Object.class) && inCatch) {
+			inCatch = false;
+			try {
+				Method toAssign = actualClass.getDeclaredMethod(methodName);
+				if(actualClass.equals(klazz))
+					toReturn = toAssign;
+				else if(Modifier.isPublic(toAssign.getModifiers()) || Modifier.isProtected(toAssign.getModifiers())) // se actualClass non e' klazz (ma una superclasse)
+					toReturn = toAssign;																			// controllo che il metodo sia public o protected
+				else throw new NoSuchMethodException(); // cosi' entro nel catch che mi prepara al nuovo ciclo
+																						
+			} catch (NoSuchMethodException e) {
+				actualClass = actualClass.getSuperclass();
+				inCatch = true;
+			}
+		}
+		if(toReturn == null)
+			toReturn = Object.class.getDeclaredMethod(methodName);
+		
+		return toReturn;
+	}
 
 	public Population<? extends Measure<Double>> getTemp() {
 		return this.temp;

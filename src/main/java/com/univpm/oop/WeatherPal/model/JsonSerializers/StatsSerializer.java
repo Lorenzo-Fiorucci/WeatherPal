@@ -29,7 +29,7 @@ public class StatsSerializer extends StdSerializer<Stats> {
 		jgen.writePOJOField(stat.getPressure().getName(), stat.getPressure());
 		jgen.writePOJOField(stat.getClouds().getName(), stat.getClouds());
 		jgen.writePOJOField(stat.getAirPoll().getName(), stat.getAirPoll());
-		jgen.writePOJOField("period", stat.getPeriod());
+		jgen.writePOJOField("Stats period", stat.getPeriod());
 		jgen.writeEndObject();
 	}
 }

@@ -135,12 +135,13 @@ public interface Distribution {
 		HashMap<String, Vector<E>> fieldValues = new HashMap<>(); // come Vector<Vector<?>>, ma ogni Vector interno ha un nome associato
 		
 		Class<?> klazz = array.get(0).getClass();
-		Field[] fields = klazz.getDeclaredFields();
+		Field[] fields = getVisibleFields(klazz);
 		
 		for (Distribution element : array) {
 			for (Field field : fields) {
 				try {
-					Method getField = klazz.getDeclaredMethod("get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1)); //getField del field attuale
+					String getterName = "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+					Method getField = getVisibleMethod(klazz, getterName); // getter del field attuale
 					Vector<E> toPut; // vettore da assegnare alla chiave di fieldValues corrispondente all'attributo attuale
 					
 					if(!fieldValues.containsKey(field.getName()))
@@ -166,7 +167,7 @@ public interface Distribution {
 	 * @param klazz : referece class
 	 * @return a {@code Field} array containing all the attribbutes of {@code klazz} class, even those inherited
 	 */
-	private Field[] getVisibleFields(Class<?> klazz) {
+	private static Field[] getVisibleFields(Class<?> klazz) {
 		
 		Field[] thisFields = klazz.getDeclaredFields();
 		
@@ -190,6 +191,33 @@ public interface Distribution {
 			klazz = klazz.getSuperclass(); //klazz turns into its superclass
 		}
 		return thisFields;
+	}
+
+	private static Method getVisibleMethod(Class<?> klazz, String methodName) throws NoSuchMethodException {
+
+		Method toReturn = null;
+		boolean inCatch = true;
+		Class<?> actualClass = klazz;
+		
+		while(!actualClass.equals(Object.class) && inCatch) {
+			inCatch = false;
+			try {
+				Method toAssign = actualClass.getDeclaredMethod(methodName);
+				if(actualClass.equals(klazz))
+					toReturn = toAssign;
+				else if(Modifier.isPublic(toAssign.getModifiers()) || Modifier.isProtected(toAssign.getModifiers())) // se actualClass non e' klazz (ma una superclasse)
+					toReturn = toAssign;																			// controllo che il metodo sia public o protected
+				else throw new NoSuchMethodException(); // cosi' entro nel catch che mi prepara al nuovo ciclo
+																						
+			} catch (NoSuchMethodException e) {
+				actualClass = actualClass.getSuperclass();
+				inCatch = true;
+			}
+		}
+		if(toReturn == null)
+			toReturn = Object.class.getDeclaredMethod(methodName);
+		
+		return toReturn;
 	}
 
 }
