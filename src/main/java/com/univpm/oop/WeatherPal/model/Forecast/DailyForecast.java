@@ -16,6 +16,10 @@ public class DailyForecast extends Forecast {
 
     }
 
+    public DailyForecast(){
+
+    }
+
     public LocalTime getSunrise() {
         return sunrise;
     }
