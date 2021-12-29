@@ -1,7 +1,10 @@
 package com.univpm.oop.WeatherPal.model.Measures;
 
 import com.univpm.oop.WeatherPal.exceptions.InvalidFormatterException;
+import com.univpm.oop.WeatherPal.model.JsonSerializers.InstantMeasureSerializer;
 import com.univpm.oop.WeatherPal.model.tools.EpochConverter;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,6 +17,7 @@ import java.time.format.DateTimeParseException;
  * 		: the concrete type for the measure value. It must be a class that extends
  * 		<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Number.html">Number</a>
  */
+@JsonSerialize(using = InstantMeasureSerializer.class)
 public class InstantMeasure<T> extends DailyMeasure<T> {
 
 	LocalTime time;
