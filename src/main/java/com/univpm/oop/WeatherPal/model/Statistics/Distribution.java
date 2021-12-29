@@ -59,6 +59,7 @@ public interface Distribution {
 		return (double)integer / Math.pow(10, decimalPlaces);
 	}
 	
+	
 	/**
 	 * Method that creates an average representation of all the objects contained in {@code array} and returns it as an hashmap. 
 	 * This hashmap has the same tree node structure of the class of {@code array}'s elements: each key is an attribute name, the 
