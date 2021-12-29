@@ -1,37 +1,59 @@
 package com.univpm.oop.WeatherPal.model.tools;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.univpm.oop.WeatherPal.model.City.GeoPoint;
-import com.univpm.oop.WeatherPal.model.Filters.DailyPeriod;
-import com.univpm.oop.WeatherPal.model.Filters.HourlyPeriod;
 import com.univpm.oop.WeatherPal.model.Forecast.*;
+import com.univpm.oop.WeatherPal.model.Measures.Filters.DailyPeriod;
+import com.univpm.oop.WeatherPal.model.Measures.Filters.HourlyPeriod;
 import com.univpm.oop.WeatherPal.model.Measures.InstantMeasure;
 import com.univpm.oop.WeatherPal.model.Measures.Measure;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.*;
-import java.time.*;
-import java.time.format.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Vector;
 
 public class JsonParser {
 
-	public static Vector<Forecast> HourlyFile(String date, String time, byte hours, String folderPath) {
-		try {
-			LocalDate lclDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-			LocalTime lclTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
+	public static Vector<Forecast> HourlyFile(HourlyForecast hourlyForecast) throws IOException {
 
+		Vector<Forecast> forecasts = new Vector<>();
 
+		ObjectMapper mapper = new ObjectMapper();
 
-		} catch(DateTimeParseException e) {
+		String root = System.getProperty("user.dir");
+		String folderPath = "\\src\\main\\resources\\static\\Every1h";
+		File folder = new File(root + folderPath);
+
+		for (String fileName : folder.list()){
+
+			JsonNode node = mapper.readTree(new File(root + folderPath + fileName));
+
+			HourlyForecast forecast = new HourlyForecast();
+			forecast.setWeather(new Weather(node.get("weather").get(0).get("id").asInt(),
+					node.get("weather").get(0).get("main").asText(),
+					node.get("weather").get(0).get("description").asText()));
+			forecast.setTemp(new Measure<Double>(node.get("main").get("temp").asDouble(), " °C"));
+			forecast.setFeelsLike(new Measure<Double>(node.get("main").get("feels_like").asDouble(), " °C"));
+			forecast.setHumidity(new Measure<Byte>((byte) node.get("main").get("humidity").asInt(), " %"));
+			forecast.setWind(new Measure<Integer>(node.get("wind").get("speed").asInt(), " m/s"));
+			forecast.setPressure(new Measure<Integer>(node.get("main").get("pressure").asInt(), " Pa"));
+			forecast.setClouds(new Measure<Byte>((byte) node.get("clouds").get("all").asInt(), " %"));
+
+			forecasts.add(forecast);
 
 		}
 
+		return forecasts;
 	}
 
 
