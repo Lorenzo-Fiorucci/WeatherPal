@@ -1,6 +1,6 @@
 package com.univpm.oop.WeatherPal.model.Statistics;
 
-import java.lang.reflect.*;
+import com.univpm.oop.WeatherPal.model.tools.ReflectionTools;
 import java.util.*;
 
 public interface Distribution {
@@ -31,7 +31,23 @@ public interface Distribution {
 		toReturn /= (array.size() - 1);
 		return cut(toReturn, (byte)4);
 	}
+
+	/**
+	 * 
+	 * @param array : vector of {@code Number} or subclasses
+	 * @return the standard deviation of {@code array}'s elements, as a double value with 4 decimal places.
+	 */
+	public static double simpleStdDev(Vector<? extends Number> array) {
+		
+		return cut( Math.sqrt(simpleVar(array)), (byte)4 );
+	}
 	
+	/**
+	 * Method to cut the decimal digits in excess with a "to nearest" rounding logic.
+	 * @param toCut : the double to cut
+	 * @param decimalPlaces : the number of decimal places to keep
+	 * @return {@code toCut} in which the number of decimal places is {@code decimalPlaces}.
+	 */
 	private static double cut(double toCut, byte decimalPlaces) {
 		double bigger = toCut * Math.pow(10, decimalPlaces);
 		long integer;
@@ -55,7 +71,7 @@ public interface Distribution {
 	public static <E> HashMap<String,Object> complexAvg(Vector<? extends Distribution> array) {
 		
 		HashMap<String, Object> toReturn = new HashMap<>();
-		HashMap<String, Vector<E>> fieldValues = getFieldValues(array); // non Vector<Object> perche' il compilatore vuole tutti elementi Object (e non sottoclassi)
+		HashMap<String, Vector<E>> fieldValues = ReflectionTools.getFieldValues(array); // non Vector<Object> perche' il compilatore vuole tutti elementi Object (e non sottoclassi)
 																		// quindi mi impedisce di castare a Vector<? extends Number> a riga 24.
 		
 		for (Map.Entry<String, Vector<E>> entry : fieldValues.entrySet()) {
@@ -63,7 +79,8 @@ public interface Distribution {
 			if(entry.getValue().get(0) instanceof Number)
 				toReturn.put(entry.getKey(), simpleAvg((Vector<? extends Number>)entry.getValue()));
 			else
-				toReturn.put(entry.getKey(), complexAvg((Vector<? extends Distribution>)entry.getValue()));
+				if(entry.getValue().get(0) instanceof Distribution)
+					toReturn.put(entry.getKey(), complexAvg((Vector<? extends Distribution>)entry.getValue()));
 		}
 		return toReturn;
 	}
@@ -81,14 +98,15 @@ public interface Distribution {
 	public static <E> HashMap<String,Object> complexVar(Vector<? extends Distribution> array) {
 
 		HashMap<String, Object> toReturn = new HashMap<>();
-		HashMap<String, Vector<E>> fieldValues = getFieldValues(array);
+		HashMap<String, Vector<E>> fieldValues = ReflectionTools.getFieldValues(array);
 
 		for (Map.Entry<String, Vector<E>> entry : fieldValues.entrySet()) {
 			
 			if(entry.getValue().get(0) instanceof Number)
 				toReturn.put(entry.getKey(), simpleVar((Vector<? extends Number>)entry.getValue()));
 			else
-				toReturn.put(entry.getKey(), complexVar((Vector<? extends Distribution>)entry.getValue()));
+				if(entry.getValue().get(0) instanceof Distribution)
+					toReturn.put(entry.getKey(), complexVar((Vector<? extends Distribution>)entry.getValue()));
 		}
 		return toReturn;
 
@@ -107,117 +125,17 @@ public interface Distribution {
 	public static <E> HashMap<String,Object> complexStdDev(Vector<? extends Distribution> array) {
 
 		HashMap<String, Object> toReturn = new HashMap<>();
-		HashMap<String, Vector<E>> fieldValues = getFieldValues(array);
+		HashMap<String, Vector<E>> fieldValues = ReflectionTools.getFieldValues(array);
 
 		for (Map.Entry<String, Vector<E>> entry : fieldValues.entrySet()) {
 			
 			if(entry.getValue().get(0) instanceof Number)
 				toReturn.put(entry.getKey(), cut( Math.sqrt(simpleVar((Vector<? extends Number>) entry.getValue())), (byte)4 ));
 			else
-				toReturn.put(entry.getKey(), complexStdDev((Vector<? extends Distribution>)entry.getValue()));
+				if(entry.getValue().get(0) instanceof Distribution)
+					toReturn.put(entry.getKey(), complexStdDev((Vector<? extends Distribution>)entry.getValue()));
 		}
 		return toReturn;
 
 	}
-
-
-	/**
-	 * @param array : a vector of objects that implement {@code Distribution} interface
-	 * @return
-	 * 		a hashmap with a string-Vector couple for each attribute of {@code array}'s elements.
-	 * 		(attributes that: (1) have a calem case getter,
-	 *						  (2) extend Number or implement Distribution).<p>
-	 *		Keys (String) identify attributes' names.
-	 * 		Corresponding values (Vector) identify the values of those attributes in the elements of {@code array}.
-	 */
-	public static <E> HashMap<String, Vector<E>> getFieldValues(Vector<? extends Distribution> array) {
-		
-		HashMap<String, Vector<E>> fieldValues = new HashMap<>(); // come Vector<Vector<?>>, ma ogni Vector interno ha un nome associato
-		
-		Class<?> klazz = array.get(0).getClass();
-		Field[] fields = getVisibleFields(klazz);
-		
-		for (Distribution element : array) {
-			for (Field field : fields) {
-				try {
-					String getterName = "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-					Method getField = getVisibleMethod(klazz, getterName); // getter del field attuale
-					Vector<E> toPut; // vettore da assegnare alla chiave di fieldValues corrispondente all'attributo attuale
-					
-					if(!fieldValues.containsKey(field.getName()))
-						toPut = new Vector<>();
-					else
-						toPut = fieldValues.get(field.getName());
-					
-					Object toAdd = getField.invoke(element);
-					if(toAdd != null && (toAdd instanceof Number || toAdd instanceof Distribution)) { // controllo che quell'attributo non sia nullo e che estenda Number o Distribution
-						toPut.add( (E)toAdd );
-						fieldValues.put(field.getName(), toPut);
-					}
-				}catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-					System.out.println(e);
-				}
-			}
-		}
-		return fieldValues;
-	}
-
-	/**
-	 * 
-	 * @param klazz : referece class
-	 * @return a {@code Field} array containing all the attribbutes of {@code klazz} class, even those inherited
-	 */
-	private static Field[] getVisibleFields(Class<?> klazz) {
-		
-		Field[] thisFields = klazz.getDeclaredFields();
-		
-		while(!klazz.getSuperclass().equals(Object.class)) {
-		
-			Field[] superFields = klazz.getSuperclass().getDeclaredFields();
-			Field[] allFields = new Field[thisFields.length + superFields.length];
-
-			for(int i = 0; i < thisFields.length; i++)
-				allFields[i] = thisFields[i];
-			
-			for(int i = thisFields.length; i < allFields.length; i++) {
-				if(Modifier.isPublic(superFields[i - thisFields.length].getModifiers()) || Modifier.isProtected(superFields[i - thisFields.length].getModifiers()))
-					allFields[i] = superFields[i - thisFields.length];
-			}
-			
-			thisFields = new Field[allFields.length];
-			for (int i = 0; i < allFields.length; i++) // thisField becomes the same as allFields
-				thisFields[i] = allFields[i];
-			
-			klazz = klazz.getSuperclass(); //klazz turns into its superclass
-		}
-		return thisFields;
-	}
-
-	private static Method getVisibleMethod(Class<?> klazz, String methodName) throws NoSuchMethodException {
-
-		Method toReturn = null;
-		boolean inCatch = true;
-		Class<?> actualClass = klazz;
-		
-		while(!actualClass.equals(Object.class) && inCatch) {
-			inCatch = false;
-			try {
-				Method toAssign = actualClass.getDeclaredMethod(methodName);
-				if(actualClass.equals(klazz))
-					toReturn = toAssign;
-				else if(Modifier.isPublic(toAssign.getModifiers()) || Modifier.isProtected(toAssign.getModifiers())) // se actualClass non e' klazz (ma una superclasse)
-					toReturn = toAssign;																			// controllo che il metodo sia public o protected
-				else throw new NoSuchMethodException(); // cosi' entro nel catch che mi prepara al nuovo ciclo
-																						
-			} catch (NoSuchMethodException e) {
-				actualClass = actualClass.getSuperclass();
-				inCatch = true;
-			}
-		}
-		if(toReturn == null)
-			toReturn = Object.class.getDeclaredMethod(methodName);
-		
-		return toReturn;
-	}
-
 }

@@ -57,7 +57,7 @@ public class MeasuresAnalyzer {
 	 */
 	public static double numStdDev(Vector<? extends Measure<? extends Number>> array) {
 		
-		return Math.sqrt(Distribution.simpleVar(getValues(array)));
+		return Distribution.simpleStdDev(getValues(array));
 	}
 
 	/**

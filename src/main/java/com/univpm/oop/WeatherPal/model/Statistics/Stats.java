@@ -2,6 +2,7 @@ package com.univpm.oop.WeatherPal.model.Statistics;
 
 import com.univpm.oop.WeatherPal.model.Measures.*;
 import com.univpm.oop.WeatherPal.model.tools.MeasuresAnalyzer;
+import com.univpm.oop.WeatherPal.model.tools.ReflectionTools;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.univpm.oop.WeatherPal.exceptions.EmptyVectorException;
 import com.univpm.oop.WeatherPal.model.Filters.DailyPeriod;
@@ -10,7 +11,6 @@ import com.univpm.oop.WeatherPal.model.Forecast.*;
 import com.univpm.oop.WeatherPal.model.JsonSerializers.StatsSerializer;
 
 import java.util.*;
-import java.lang.reflect.*;
 import java.time.*;
 
 /**
@@ -138,116 +138,42 @@ public class Stats {
 	 * 		{@code DailyMeasure} if {@code forecasts} is a vector of {@code DailyForecast}.
 	 * @param forecasts 
 	 * 		: vector of {@code HourlyForecast} or {@code DailyForecast}
-	 * @return a hashmap.<p> 
+	 * @return an {@code HashMap<String, Vector<E>>}.<p> 
 	 * 		In each couple {@code String}-{@code Vector<E>} : the key is the name of a {@code Forecast} attribute of the class {@code Measure},
-	 * 		the corresponding value ({@code Vector<E>}) is the list of all the measures of that attribute in {@code forecasts}' elements.
+	 * 		the corresponding value ({@code Vector<E>}) is the list of all the values of that attribute in {@code forecasts}' elements.
 	 */
+
 	private <T, E extends Measure<T>> HashMap<String,Vector<E>> getMeasures(Vector<? extends Forecast> forecasts) {
 
-		// il caso in cui forecasts e' vuoto e' stato gia' gestito, nella prima riga del costruttore
-		
-		Class<? extends Forecast> klazz = forecasts.get(0).getClass();
-		Field[] fields = getVisibleFields(klazz);
-		
-		HashMap<String,Vector<E>> measuresMap = new HashMap<>();
-		
-		LocalDate date;
-		LocalTime time = null;
-		
-		for(Forecast forecast : forecasts) {
-			
-			date = forecast.getDate();
-			if(forecast instanceof HourlyForecast)
-				time = ((HourlyForecast)forecast).getTime();
-			
-			for(Field field : fields) {
-				if(field.getType().getSimpleName().equals("Measure") && !field.getName().equals("pop") && !field.getName().equals("uv")) {
-					try {
-						String getterName = "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-						Method getField = getVisibleMethod(klazz, getterName); // getter del field attuale
-						Measure<T> newMeasure;
-						if(time != null)
-							newMeasure = new InstantMeasure<T>((Measure<T>)getField.invoke(forecast), date, time);
-						else
-							newMeasure = new DailyMeasure<T>((Measure<T>)getField.invoke(forecast), date);
-						
-						Vector<E> toPut;
-						if(!measuresMap.containsKey(field.getName()))
-							toPut = new Vector<>();
-						else
-							toPut = measuresMap.get(field.getName());
-						
-						toPut.add((E)newMeasure); // il tipo effettivo di newMeasure estende Measure<T> e corrisponde ad E, per ogni coppia String-Vector:
-												  // se forecasts e' un vettore di HourlyForecast, newMeasure sara' sempre un'InstantMeasure<T>;
-												  // se forecasts e' un vettore di DailyForecast, newMeasure sara' sempre una DailyMeasure<T> (con T che varia in base al field)
-						
-						 measuresMap.put(field.getName(), toPut);
+		HashMap<String, Vector<E>> measuresMap = new HashMap<>();
+		HashMap<String, Vector<Object>> fieldsMap = new HashMap<>();
+		fieldsMap = ReflectionTools.getFieldValues(forecasts);
+
+		for(Map.Entry<String, Vector<Object>> entry : fieldsMap.entrySet()) {
+			if(entry.getValue().get(0) instanceof Measure) {
+				
+				Vector<E> toPut;
+				if(fieldsMap.containsKey("time")) { // controllo se forecasts e' un Vector<HourlyForecast>
 					
-					} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-						System.out.println(e);
+					toPut = (Vector<E>) new Vector<InstantMeasure<T>>();
+					for (int i = 0; i < entry.getValue().size(); i++) {
+						InstantMeasure<T> measure = new InstantMeasure<T>((Measure<T>) entry.getValue().get(i), // lecito per l'instanceof precedente
+																		  (LocalDate) fieldsMap.get("date").get(i), // fieldsMap.get("date") e' un Vecotor<LocalDate>
+																		  (LocalTime) fieldsMap.get("time").get(i)); // fieldsMap.get("time") e' un Vecotor<LocalTime>
+						toPut.add((E)measure);
+					}
+				} else { // altrimenti forecasts e' un Vector<DailyForecast>
+					toPut = (Vector<E>) new Vector<DailyMeasure<T>>();
+					for (int i = 0; i < entry.getValue().size(); i++) {
+						DailyMeasure<T> measure = new DailyMeasure<>((Measure<T>) entry.getValue().get(i),
+																	 (LocalDate) fieldsMap.get("date").get(i));
+						toPut.add((E)measure);
 					}
 				}
+				measuresMap.put(entry.getKey(), toPut);
 			}
 		}
 		return measuresMap;
-	}
-
-	/**
-	 * 
-	 * @param klazz : referece class
-	 * @return a {@code Field} array containing all the attribbutes of {@code klazz} class, even those inherited
-	 */
-	private Field[] getVisibleFields(Class<?> klazz) {
-		
-		Field[] thisFields = klazz.getDeclaredFields();
-		
-		while(!klazz.getSuperclass().equals(Object.class)) { // finche' la superclasse non e' object, aggiungi i suoi campi public o protected
-		
-			Field[] superFields = klazz.getSuperclass().getDeclaredFields();
-			Field[] allFields = new Field[thisFields.length + superFields.length];
-
-			for(int i = 0; i < thisFields.length; i++)
-				allFields[i] = thisFields[i];
-			
-			for(int i = thisFields.length; i < allFields.length; i++) {
-				if(Modifier.isPublic(superFields[i - thisFields.length].getModifiers()) || Modifier.isProtected(superFields[i - thisFields.length].getModifiers()))
-					allFields[i] = superFields[i - thisFields.length];
-			}
-			
-			thisFields = new Field[allFields.length];
-			for (int i = 0; i < allFields.length; i++) // thisField diventa uguale a allFields
-				thisFields[i] = allFields[i];		   //
-			
-			klazz = klazz.getSuperclass(); // klazz diventa la sua superclasse
-		}
-		return thisFields;
-	}
-
-	private Method getVisibleMethod(Class<?> klazz, String methodName) throws NoSuchMethodException {
-
-		Method toReturn = null;
-		boolean inCatch = true;
-		Class<?> actualClass = klazz;
-		
-		while(!actualClass.equals(Object.class) && inCatch) {
-			inCatch = false;
-			try {
-				Method toAssign = actualClass.getDeclaredMethod(methodName);
-				if(actualClass.equals(klazz))
-					toReturn = toAssign;
-				else if(Modifier.isPublic(toAssign.getModifiers()) || Modifier.isProtected(toAssign.getModifiers())) // se actualClass non e' klazz (ma una superclasse)
-					toReturn = toAssign;																			// controllo che il metodo sia public o protected
-				else throw new NoSuchMethodException(); // cosi' entro nel catch che mi prepara al nuovo ciclo
-																						
-			} catch (NoSuchMethodException e) {
-				actualClass = actualClass.getSuperclass();
-				inCatch = true;
-			}
-		}
-		if(toReturn == null)
-			toReturn = Object.class.getDeclaredMethod(methodName);
-		
-		return toReturn;
 	}
 
 	public Population<? extends Measure<Double>> getTemp() {
