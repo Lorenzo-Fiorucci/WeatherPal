@@ -4,7 +4,6 @@ import com.univpm.oop.WeatherPal.model.Measures.Measure;
 import com.univpm.oop.WeatherPal.model.Statistics.Distribution;
 
 import java.util.*;
-import java.lang.Math;
 
 public class MeasuresAnalyzer {
 
