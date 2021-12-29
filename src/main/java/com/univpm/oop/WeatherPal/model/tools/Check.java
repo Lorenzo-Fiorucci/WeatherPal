@@ -1,5 +1,7 @@
 package com.univpm.oop.WeatherPal.model.tools;
 
+import com.univpm.oop.WeatherPal.exceptions.InvalidFormatterException;
+import com.univpm.oop.WeatherPal.exceptions.InvalidPeriodException;
 import com.univpm.oop.WeatherPal.model.Filters.HourlyPeriod;
 
 import java.time.LocalDate;
@@ -10,30 +12,63 @@ import java.time.format.DateTimeParseException;
 
 public class Check {
 
-    public static boolean VerifyPattern(String day1, String day2, String time1, String time2){
+    public static void VerPatHou(String day1, String day2, String time1, String time2) throws InvalidFormatterException {
 
-        boolean verify = false;
         try {
             LocalDate lclDate1 = LocalDate.parse(day1, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
             LocalDate lclDate2 = LocalDate.parse(day2, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+
+        } catch (DateTimeParseException e) {
+            throw new InvalidFormatterException("Invalid pattern of date");
+        }
+
+        try {
             LocalTime lclTime1 = LocalTime.parse(time1, DateTimeFormatter.ofPattern("HH:mm"));
             LocalTime lclTime2 = LocalTime.parse(time2, DateTimeFormatter.ofPattern("HH:mm"));
-            verify = true;
 
-        } catch	(DateTimeParseException e){
-            e.printStackTrace();
+        } catch (DateTimeParseException e) {
+            throw new InvalidFormatterException("Invalid pattern of time");
         }
-        return verify;
     }
 
-    public static boolean VerifyPeriod(String day1, String day2, String time1, String time2, HourlyPeriod hourlyPeriod) {
+    public static void VerPatDay(String day1, String day2) throws InvalidFormatterException {
 
-        boolean verify = false;
-        LocalDateTime dateTime1 = LocalDateTime.parse(day1 + " " + time1, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
-        LocalDateTime dateTime2 = LocalDateTime.parse(day2 + " " + time2, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
-        if( hourlyPeriod.contains(dateTime1) && hourlyPeriod.contains(dateTime2))
-            verify = true;
+        try {
+            LocalDate lclDate1 = LocalDate.parse(day1, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            LocalDate lclDate2 = LocalDate.parse(day2, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
-        return verify;
+        } catch (DateTimeParseException e) {
+            throw new InvalidFormatterException("Invalid pattern of date");
+        }
+    }
+
+
+    public static void VerPerHou(String day1, String day2, String time1, String time2, HourlyPeriod hourlyPeriod) throws InvalidPeriodException {
+
+        try {
+
+            LocalDateTime dateTime1 = LocalDateTime.parse(day1 + " " + time1, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+            LocalDateTime dateTime2 = LocalDateTime.parse(day2 + " " + time2, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+            hourlyPeriod.contains(dateTime1);
+            hourlyPeriod.contains(dateTime2);
+
+        } catch (DateTimeParseException e) {
+            throw new InvalidPeriodException("This hourly period is not available");
+        }
+    }
+
+    public static void VerPerDay(String day1, String day2, HourlyPeriod hourlyPeriod) throws InvalidPeriodException {
+
+        try {
+
+            LocalDate date1 = LocalDate.parse(day1, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            LocalDate date2 = LocalDate.parse(day2, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            hourlyPeriod.contains(date1);
+            hourlyPeriod.contains(date2);
+
+
+        } catch (DateTimeParseException e) {
+            throw new InvalidPeriodException("This daily period is not available");
+        }
     }
 }
