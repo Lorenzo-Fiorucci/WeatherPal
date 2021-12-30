@@ -12,25 +12,6 @@ import java.time.format.DateTimeParseException;
 
 public class Check {
 
-    public static void VerPatHou(String day1, String day2, String time1, String time2) throws InvalidFormatterException {
-
-        try {
-            LocalDate lclDate1 = LocalDate.parse(day1, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-            LocalDate lclDate2 = LocalDate.parse(day2, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-
-        } catch (DateTimeParseException e) {
-            throw new InvalidFormatterException("Invalid pattern of date");
-        }
-
-        try {
-            LocalTime lclTime1 = LocalTime.parse(time1, DateTimeFormatter.ofPattern("HH:mm"));
-            LocalTime lclTime2 = LocalTime.parse(time2, DateTimeFormatter.ofPattern("HH:mm"));
-
-        } catch (DateTimeParseException e) {
-            throw new InvalidFormatterException("Invalid pattern of time");
-        }
-    }
-
     public static void VerPatDay(String day1, String day2) throws InvalidFormatterException {
 
         try {
@@ -39,6 +20,18 @@ public class Check {
 
         } catch (DateTimeParseException e) {
             throw new InvalidFormatterException("Invalid pattern of date");
+        }
+    }
+
+    public static void VerPatHou (String day1, String day2, String time1, String time2) throws InvalidFormatterException {
+
+        VerPatDay(day1, day2);
+        try {
+            LocalTime lclTime1 = LocalTime.parse(time1, DateTimeFormatter.ofPattern("HH:mm"));
+            LocalTime lclTime2 = LocalTime.parse(time2, DateTimeFormatter.ofPattern("HH:mm"));
+
+        } catch (DateTimeParseException e) {
+            throw new InvalidFormatterException("Invalid pattern of time");
         }
     }
 
