@@ -95,6 +95,14 @@ public class HourlyPeriod extends DailyPeriod{
 		return (dateTime.compareTo(start) >= 0) && (dateTime.compareTo(end) <= 0);
 	}
 
+	public boolean contains(HourlyPeriod otherPeriod) {
+		
+		LocalDateTime otherStart = LocalDateTime.of(otherPeriod.getStartDate(), otherPeriod.getStartTime());
+		LocalDateTime otherEnd = LocalDateTime.of(otherPeriod.getEndDate(), otherPeriod.getEndTime());
+
+		return contains(otherStart) && contains(otherEnd);
+	}
+
 	@Override
 	public String toString() {
 		

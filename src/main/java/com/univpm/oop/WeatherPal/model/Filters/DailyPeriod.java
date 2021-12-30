@@ -59,6 +59,15 @@ public class DailyPeriod {
 		return (date.compareTo(startDate) >= 0) && (date.compareTo(endDate) <= 0);
 	}
 
+	/**
+	 * 
+	 * @param otherPeriod : period o be checked
+	 * @return true if {@code otherPeriod} is contained in this period
+	 */
+	public boolean contains(DailyPeriod otherPeriod) {
+		return contains(otherPeriod.getStartDate()) && contains(otherPeriod.getEndDate());
+	}
+
 	@Override
 	public String toString() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
