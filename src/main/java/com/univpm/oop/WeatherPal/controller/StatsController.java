@@ -63,7 +63,7 @@ public class StatsController {
                                            @RequestParam(name = "end time") String time2) {
         ResponseEntity<Object> response;
 
-        if (day2.equals(""))
+        if (day2 == null)
             day2 = day1;
         
         try {
@@ -75,30 +75,26 @@ public class StatsController {
     }
 
 
-
-
-/*
     @RequestMapping(value = "/stats/daily", method = RequestMethod.GET)
     public ResponseEntity<Object> getDailyStats(@RequestParam(name = "city", defaultValue = "ancona") String city,
                                                 @RequestParam(name = "start date") String day1,
                                                 @RequestParam(name = "end date") String day2) {
-        ResponseEntity<Object> response;
-        if (day2.equals(""))
-            day2 = day1;
-        if(!Check.VerPatDay(day1, day2)){
-            response = new ResponseEntity<Object>("ERROR, WRONG PATTERN OF DATE!", HttpStatus.BAD_REQUEST);
-        } else {
-            if(city.toLowerCase().equals("ancona") {
-                if (){
-                    //leggi statistiche file giornaliere
-            }
-            } else {
-            }
 
+        ResponseEntity<Object> response;
+
+        if (day2 == null)
+            day2 = day1;
+
+        try {
+
+            response = new ResponseEntity<Object>(statsService.getDayStats(city, day1, day2), HttpStatus.OK);
+
+        } catch (Exception e){
+            response = new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        return
+        return response;
     }
-*/
+
 
 }
