@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.univpm.oop.WeatherPal.exceptions.EmptyVectorException;
 import com.univpm.oop.WeatherPal.exceptions.InvalidFormatterException;
 import com.univpm.oop.WeatherPal.exceptions.InvalidPeriodException;
+import com.univpm.oop.WeatherPal.model.Filters.DailyPeriod;
 import com.univpm.oop.WeatherPal.model.Filters.HourlyPeriod;
 import com.univpm.oop.WeatherPal.model.Statistics.Stats;
 import com.univpm.oop.WeatherPal.model.tools.Check;
@@ -65,7 +66,7 @@ public class StatsServiceImpl implements StatsService {
 
             HourlyPeriod hisPer = new HourlyPeriod(LocalDate.now().minusDays(5), LocalTime.of(01, 00),
                     LocalDate.now(), LocalTime.now());
-            if (hisPer.contains(dateTime1) && hisPer.contains(dateTime2)){
+            if (hisPer.contains(houPer)){
 
                 Stats statsObj = new Stats(JsonParser.fromHistoricalHourly(city, houPer));
                 response = mapper.writeValueAsString(statsObj);
@@ -79,13 +80,32 @@ public class StatsServiceImpl implements StatsService {
         return response;
     }
 
-/*
+
     @Override
-    public String getHouStats(HourlyPeriod hourlyPeriod) {
+    public String getDayStats(String city, String day1, String day2)
+            throws InvalidFormatterException, IOException, InvalidPeriodException, InterruptedException, EmptyVectorException {
 
+        Check.VerPatDay(day1, day2);
 
+        LocalDate date1 = LocalDate.parse(day1, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        LocalDate date2 = LocalDate.parse(day2, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+
+        DailyPeriod dayPer = new DailyPeriod(date1, date2);
+        DailyPeriod hisPer = new DailyPeriod(LocalDate.now().minusDays(5), LocalDate.now());
+
+        String response = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        if (hisPer.contains(dayPer)){
+
+            Stats statsObj = new Stats(JsonParser.fromHistoricalDaily(city, dayPer));
+            response = mapper.writeValueAsString(statsObj);
+
+        } else {
+
+                throw new InvalidPeriodException("This period is not available");
+        }
+
+        return response;
     }
-*/
-    //C:\Users\metti\Documents\VS Code Projects\WeatherPal\src\main\resources\static\Every1h
-
 }

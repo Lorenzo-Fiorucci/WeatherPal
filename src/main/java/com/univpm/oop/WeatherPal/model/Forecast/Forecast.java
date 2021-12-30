@@ -20,7 +20,6 @@ public class Forecast {
     protected Measure<AirPollution> airPoll;
     protected Measure<Byte> clouds;
     protected Measure<Byte> pop;
-    protected Measure<Byte> uv;
 
     public Weather getWeather(){
         return weather;
@@ -91,12 +90,4 @@ public class Forecast {
     public void setPop(Measure<Byte> pop) {
         this.pop = pop;
     }
-
-    public Measure<Byte> getUv(){
-        return uv;
-    }
-    public void setUv(Measure<Byte> uv) {
-        this.uv = uv;
-    }
-
 }

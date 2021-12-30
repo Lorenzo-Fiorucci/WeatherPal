@@ -14,4 +14,7 @@ public interface StatsService {
     public String getHouStats(String city, String day1, String day2, String time1, String time2)
             throws InvalidFormatterException, IOException, InterruptedException, EmptyVectorException, InvalidPeriodException;
 
+    public String getDayStats(String city, String  day1, String day2)
+            throws InvalidFormatterException, IOException, InterruptedException, EmptyVectorException, InvalidPeriodException;
+
 }
