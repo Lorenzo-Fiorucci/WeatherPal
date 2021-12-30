@@ -1,13 +1,14 @@
 package com.univpm.oop.WeatherPal.model.tools;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.univpm.oop.WeatherPal.model.City.GeoPoint;
 import com.univpm.oop.WeatherPal.model.Forecast.*;
 import com.univpm.oop.WeatherPal.model.Filters.DailyPeriod;
 import com.univpm.oop.WeatherPal.model.Filters.HourlyPeriod;
 import com.univpm.oop.WeatherPal.model.Measures.InstantMeasure;
 import com.univpm.oop.WeatherPal.model.Measures.Measure;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,47 @@ import java.util.HashMap;
 import java.util.Vector;
 
 public class JsonParser {
+
+	/**
+	 * 
+	 * @param city : the city queried in the client request
+	 * @return a vector of {@code HourlyForecast} contining the forecast measures for 5 days, every 3 hours.
+	 * @throws InterruptedException if the operation of sending the request to OpenWeatherMap API is interrupted
+	 * @throws IOException if an I/O error occurs when sending the request to OpenWeatherMap API
+	 */
+	public static Vector<HourlyForecast> from5dForecast(String city) throws InterruptedException, IOException {
+
+		Vector<HourlyForecast> forecasts = new Vector<>();
+		ObjectMapper mapper = new ObjectMapper();
+
+		String url = "api.openweathermap.org/data/2.5/forecast?appid=65e03c27f11e0b756f47a70056be962f&units=metric&q=" + city;
+		JsonNode jNode = mapper.readTree(httpGET(url).body());
+		
+		HourlyForecast forecast;
+		for (JsonNode element : jNode.get("list")) {
+			forecast = new HourlyForecast();
+			
+			LocalDateTime dateTime = EpochConverter.toLocalDateTime(element.get("dt").asLong());
+			forecast.setDate(dateTime.toLocalDate());
+			forecast.setTime(dateTime.toLocalTime());
+			
+			Weather weather = new Weather(element.get("weather").get(0).get("id").asInt(), 
+										  element.get("weather").get(0).get("main").asText(),
+										  element.get("weather").get(0).get("description").asText());
+			forecast.setWeather(weather);
+
+			forecast.setTemp(new Measure<Double>(element.get("main").get("temp").asDouble(), "°C"));
+			forecast.setFeelsLike(new Measure<Double>(element.get("main").get("feels_like").asDouble(), "°C"));
+			forecast.setHumidity(new Measure<Byte>((byte)element.get("main").get("humidity").asInt(), "%"));
+			forecast.setPressure(new Measure<Integer>(element.get("main").get("pressure").asInt(), "°C"));
+			forecast.setWind(new Measure<Integer>(element.get("wind").get("speed").asInt(), "°C"));
+			forecast.setClouds(new Measure<Byte>((byte)element.get("clouds").get("all").asInt(), "%"));
+			forecast.setPop(new Measure<Byte>((byte)Math.round(element.get("pop").asDouble() * 100), "%"));
+
+			forecasts.add(forecast);
+		}
+		return forecasts;
+	}
 
 	public static Vector<Forecast> HourlyFile(HourlyPeriod hourlyPeriod) throws IOException, InterruptedException {
 
@@ -238,7 +280,7 @@ public class JsonParser {
 	/**
 	 * Method to get the altitude of a given point of the globe
 	 * @param point : {@code GeoPoint} object with null altitude and not null latitude and longitude.
-	 * @return the same object recived in input, with the correct altitude
+	 * @return the same object received in input, with the correct altitude
 	 * @throws IOException if an I/O error occurs when sending the request to OpenWeatherMap API
 	 * @throws InterruptedException if the operation of sending the request to OpenWeatherMap API is interrupted
 	 */
@@ -278,10 +320,11 @@ public class JsonParser {
 				"&start=" + EpochConverter.toEpochSeconds(start) + "&end=" + EpochConverter.toEpochSeconds(end); 
 		
 		JsonNode jNode = mapper.readTree(httpGET(url).body());
+		AirPollution poll;
 
 		for (JsonNode hourlyPoll : jNode.get("list")) {
 			
-			AirPollution poll = new AirPollution();
+			poll = new AirPollution();
 			poll.setIndex(hourlyPoll.get("main").get("aqi").asInt());
 			hourlyPoll = hourlyPoll.get("components");
 			poll.setCo(hourlyPoll.get("co").asDouble());

@@ -111,17 +111,17 @@ public class Stats {
 		
 		if(measures.get(0).getValue() instanceof Number) { // se measures e' vettore di misure con valori che estendono Number (oltre che implementare Comparable)
 			
-			HashMap<String, Object> avg = new HashMap<>();
-			avg.put("value", MeasuresAnalyzer.numAvg((Vector<? extends Measure<X>>) measures)); 
-			pop.setAvg(avg);
+			HashMap<String, Object> toSet = new HashMap<>();
+			toSet.put("value", MeasuresAnalyzer.numAvg((Vector<? extends Measure<X>>) measures)); 
+			pop.setAvg(toSet);
 			
-			HashMap<String, Object> var = new HashMap<>();
-			var.put("value", MeasuresAnalyzer.numVar((Vector<? extends Measure<X>>) measures));
-			pop.setVar(var);
+			toSet = new HashMap<>();
+			toSet.put("value", MeasuresAnalyzer.numVar((Vector<? extends Measure<X>>) measures));
+			pop.setVar(toSet);
 			
-			HashMap<String, Object> stdDev = new HashMap<>();
-			stdDev.put("value", MeasuresAnalyzer.numStdDev((Vector<? extends Measure<X>>) measures));
-			pop.setStdDev(stdDev);
+			toSet = new HashMap<>();
+			toSet.put("value", MeasuresAnalyzer.numStdDev((Vector<? extends Measure<X>>) measures));
+			pop.setStdDev(toSet);
 		}
 		else if (measures.get(0).getValue() instanceof Distribution) { // se measures e' vettore di misure che implementano Distribution (oltre che Comparable) 
 			
