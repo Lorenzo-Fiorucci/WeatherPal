@@ -1,9 +1,13 @@
 package com.univpm.oop.WeatherPal.model.Forecast;
 
+import com.univpm.oop.WeatherPal.model.JsonSerializers.ForecastSerializer;
 import com.univpm.oop.WeatherPal.model.Measures.Measure;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.time.LocalDate;
 
+@JsonSerialize(using = ForecastSerializer.class)
 public class Forecast {
 
     protected Weather weather;
@@ -15,7 +19,7 @@ public class Forecast {
     protected Measure<Integer> pressure;
     protected Measure<AirPollution> airPoll;
     protected Measure<Byte> clouds;
-    protected Measure<Double> pop;
+    protected Measure<Byte> pop;
     protected Measure<Byte> uv;
 
     public Weather getWeather(){
@@ -81,10 +85,10 @@ public class Forecast {
         this.clouds = clouds;
     }
 
-    public Measure<Double> getPop(){
+    public Measure<Byte> getPop(){
         return pop;
     }
-    public void setPop(Measure<Double> pop) {
+    public void setPop(Measure<Byte> pop) {
         this.pop = pop;
     }
 

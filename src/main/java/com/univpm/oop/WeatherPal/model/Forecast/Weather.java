@@ -1,7 +1,11 @@
 package com.univpm.oop.WeatherPal.model.Forecast;
 
+import com.univpm.oop.WeatherPal.model.JsonSerializers.WeatherSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.util.HashMap;
 
+@JsonSerialize(using = WeatherSerializer.class)
 public class Weather {
     private int id;
     private String type;
