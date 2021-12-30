@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.univpm.oop.WeatherPal.model.City.GeoPoint;
 import com.univpm.oop.WeatherPal.model.Forecast.*;
-import com.univpm.oop.WeatherPal.model.Measures.Filters.DailyPeriod;
-import com.univpm.oop.WeatherPal.model.Measures.Filters.HourlyPeriod;
+import com.univpm.oop.WeatherPal.model.Filters.DailyPeriod;
+import com.univpm.oop.WeatherPal.model.Filters.HourlyPeriod;
 import com.univpm.oop.WeatherPal.model.Measures.InstantMeasure;
 import com.univpm.oop.WeatherPal.model.Measures.Measure;
 
@@ -24,7 +24,7 @@ import java.util.Vector;
 
 public class JsonParser {
 
-	public static Vector<Forecast> HourlyFile(HourlyForecast hourlyForecast) throws IOException {
+	public static Vector<Forecast> HourlyFile(HourlyPeriod hourlyPeriod) throws IOException, InterruptedException {
 
 		Vector<Forecast> forecasts = new Vector<>();
 
@@ -34,24 +34,30 @@ public class JsonParser {
 		String folderPath = "\\src\\main\\resources\\static\\Every1h";
 		File folder = new File(root + folderPath);
 
-		for (String fileName : folder.list()){
+		for (String fileName : folder.list()) {
 
 			JsonNode node = mapper.readTree(new File(root + folderPath + fileName));
 
+			LocalDateTime localDateTime = EpochConverter.toLocalDateTime(node.get("dt").asInt());
+
 			HourlyForecast forecast = new HourlyForecast();
-			forecast.setWeather(new Weather(node.get("weather").get(0).get("id").asInt(),
-					node.get("weather").get(0).get("main").asText(),
-					node.get("weather").get(0).get("description").asText()));
-			forecast.setTemp(new Measure<Double>(node.get("main").get("temp").asDouble(), " °C"));
-			forecast.setFeelsLike(new Measure<Double>(node.get("main").get("feels_like").asDouble(), " °C"));
-			forecast.setHumidity(new Measure<Byte>((byte) node.get("main").get("humidity").asInt(), " %"));
-			forecast.setWind(new Measure<Integer>(node.get("wind").get("speed").asInt(), " m/s"));
-			forecast.setPressure(new Measure<Integer>(node.get("main").get("pressure").asInt(), " Pa"));
-			forecast.setClouds(new Measure<Byte>((byte) node.get("clouds").get("all").asInt(), " %"));
+			forecast.setTemp(new Measure<Double>(node.get("main").get("temp").asDouble(), "°C"));
+			forecast.setFeelsLike(new Measure<Double>(node.get("main").get("feels_like").asDouble(), "°C"));
+			forecast.setHumidity(new Measure<Byte>((byte) node.get("main").get("humidity").asInt(), "%"));
+			forecast.setWind(new Measure<Integer>(node.get("wind").get("speed").asInt(), "m/s"));
+			forecast.setPressure(new Measure<Integer>(node.get("main").get("pressure").asInt(), "hPa"));
+			forecast.setClouds(new Measure<Byte>((byte) node.get("clouds").get("all").asInt(), "%"));
+			forecast.setDate(localDateTime.toLocalDate());
+			forecast.setTime(localDateTime.toLocalTime());
 
 			forecasts.add(forecast);
 
 		}
+
+		Vector<AirPollution> pollutions = historicAirPoll(43.55, 13.1667, LocalDateTime.of(hourlyPeriod.getStartDate(), hourlyPeriod.getStartTime()),
+				LocalDateTime.of(hourlyPeriod.getEndDate(), hourlyPeriod.getEndTime()));
+		for (int i = 0; i < forecasts.size(); i++)
+			forecasts.get(i).setAirPoll(new Measure<AirPollution>(pollutions.get(i)));
 
 		return forecasts;
 	}
