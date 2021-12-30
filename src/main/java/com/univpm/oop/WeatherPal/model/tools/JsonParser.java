@@ -37,7 +37,8 @@ public class JsonParser {
 		Vector<HourlyForecast> forecasts = new Vector<>();
 		ObjectMapper mapper = new ObjectMapper();
 
-		String url = "api.openweathermap.org/data/2.5/forecast?appid=65e03c27f11e0b756f47a70056be962f&units=metric&q=" + city;
+		String apiKey = "65e03c27f11e0b756f47a70056be962f";
+		String url = "api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + apiKey;
 		JsonNode jNode = mapper.readTree(httpGET(url).body());
 		
 		HourlyForecast forecast;
@@ -183,7 +184,7 @@ public class JsonParser {
 	public static Vector<DailyForecast> fromHistoricalDaily(String city, DailyPeriod period) throws IOException, InterruptedException {
 		
 		Vector<DailyForecast> toReturn = new Vector<>();
-		Vector<HourlyForecast> hourlyForecasts = fromHistoricalHourly(city, new HourlyPeriod(period.getStartDate().atStartOfDay(),
+		Vector<HourlyForecast> hourlyForecasts = fromHistoricalHourly(city, new HourlyPeriod(period.getStartDate().atTime(01, 00),
 																							 period.getEndDate().atTime(23, 00)));
 		Vector<HourlyForecast> thisDayForecasts = new Vector<>();
 		LocalDate thisDay = period.getStartDate();

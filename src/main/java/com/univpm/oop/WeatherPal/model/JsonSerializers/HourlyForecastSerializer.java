@@ -1,29 +1,29 @@
 package com.univpm.oop.WeatherPal.model.JsonSerializers;
 
-import com.univpm.oop.WeatherPal.model.Forecast.Forecast;
+import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.univpm.oop.WeatherPal.model.Forecast.HourlyForecast;
 
-import java.io.IOException;
-import java.time.format.DateTimeFormatter;
+public class HourlyForecastSerializer extends StdSerializer<HourlyForecast> {
 
-public class ForecastSerializer extends StdSerializer<Forecast> {
-
-	public ForecastSerializer() {
+	public HourlyForecastSerializer() {
 		this(null);
 	}
 
-	public ForecastSerializer(Class<Forecast> klazz) {
+	public HourlyForecastSerializer(Class<HourlyForecast> klazz) {
 		super(klazz);
 	}
 
 	@Override
-	public void serialize(Forecast forecast, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+	public void serialize(HourlyForecast forecast, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 		
 		jgen.writeStartObject();
 		jgen.writeStringField("date", forecast.getDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+		jgen.writeStringField("time", forecast.getTime().format(DateTimeFormatter.ofPattern("HH:mm")));
 		jgen.writePOJOField("weather", forecast.getWeather());
 		jgen.writePOJOField("temperature", forecast.getTemp());
 		jgen.writePOJOField("feels like", forecast.getFeelsLike());
