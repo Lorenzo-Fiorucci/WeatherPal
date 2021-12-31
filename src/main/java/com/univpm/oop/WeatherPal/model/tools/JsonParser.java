@@ -2,8 +2,7 @@ package com.univpm.oop.WeatherPal.model.tools;
 
 import com.univpm.oop.WeatherPal.model.City.GeoPoint;
 import com.univpm.oop.WeatherPal.model.Forecast.*;
-import com.univpm.oop.WeatherPal.model.Filters.DailyPeriod;
-import com.univpm.oop.WeatherPal.model.Filters.HourlyPeriod;
+import com.univpm.oop.WeatherPal.model.Filters.*;
 import com.univpm.oop.WeatherPal.model.Measures.InstantMeasure;
 import com.univpm.oop.WeatherPal.model.Measures.Measure;
 
@@ -14,9 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.http.*;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,7 +35,7 @@ public class JsonParser {
 		ObjectMapper mapper = new ObjectMapper();
 
 		String apiKey = "65e03c27f11e0b756f47a70056be962f";
-		String url = "api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + apiKey;
+		String url = "https://api.openweathermap.org/data/2.5/forecast?units=metric&q=" + city + "&appid=" + apiKey;
 		JsonNode jNode = mapper.readTree(httpGET(url).body());
 		
 		HourlyForecast forecast;
@@ -57,8 +54,8 @@ public class JsonParser {
 			forecast.setTemp(new Measure<Double>(element.get("main").get("temp").asDouble(), "°C"));
 			forecast.setFeelsLike(new Measure<Double>(element.get("main").get("feels_like").asDouble(), "°C"));
 			forecast.setHumidity(new Measure<Byte>((byte)element.get("main").get("humidity").asInt(), "%"));
-			forecast.setPressure(new Measure<Integer>(element.get("main").get("pressure").asInt(), "°C"));
-			forecast.setWind(new Measure<Integer>(element.get("wind").get("speed").asInt(), "°C"));
+			forecast.setPressure(new Measure<Integer>(element.get("main").get("pressure").asInt(), "hPa"));
+			forecast.setWind(new Measure<Integer>(element.get("wind").get("speed").asInt(), "m/s"));
 			forecast.setClouds(new Measure<Byte>((byte)element.get("clouds").get("all").asInt(), "%"));
 			forecast.setPop(new Measure<Byte>((byte)Math.round(element.get("pop").asDouble() * 100), "%"));
 
@@ -153,7 +150,7 @@ public class JsonParser {
 					forecast.setTemp(new Measure<Double>(hourlySample.get("temp").asDouble(), "°C"));
 					forecast.setFeelsLike(new Measure<Double>(hourlySample.get("feels_like").asDouble(), "°C"));
 					forecast.setHumidity(new Measure<Byte>((byte)hourlySample.get("humidity").asInt() , "%"));
-					forecast.setWind(new Measure<Integer>(hourlySample.get("wind_speed").asInt(),"meter/sec"));
+					forecast.setWind(new Measure<Integer>(hourlySample.get("wind_speed").asInt(),"m/s"));
 					forecast.setPressure(new Measure<Integer>(hourlySample.get("pressure").asInt(), "hPa"));
 					forecast.setClouds(new Measure<Byte>((byte)hourlySample.get("clouds").asInt(), "%"));
 					
@@ -184,8 +181,14 @@ public class JsonParser {
 	public static Vector<DailyForecast> fromHistoricalDaily(String city, DailyPeriod period) throws IOException, InterruptedException {
 		
 		Vector<DailyForecast> toReturn = new Vector<>();
-		Vector<HourlyForecast> hourlyForecasts = fromHistoricalHourly(city, new HourlyPeriod(period.getStartDate().atTime(01, 00),
-																							 period.getEndDate().atTime(23, 00)));
+		
+		LocalDateTime endDateTime;
+		if(period.getEndDate().equals(LocalDate.now()))
+			endDateTime = LocalDateTime.now();
+		else
+			endDateTime = period.getEndDate().atTime(23, 00);
+		Vector<HourlyForecast> hourlyForecasts = fromHistoricalHourly(city, new HourlyPeriod(period.getStartDate().atTime(01, 00), endDateTime));
+		
 		Vector<HourlyForecast> thisDayForecasts = new Vector<>();
 		LocalDate thisDay = period.getStartDate();
 		
@@ -200,8 +203,10 @@ public class JsonParser {
 				thisDay = thisDay.plusDays(1);
 			}
 		}
-		return toReturn;
+		if(!thisDayForecasts.isEmpty())
+			toReturn.add(calcDailyForecast(thisDayForecasts));
 		
+		return toReturn;
 	}
 
 	/**

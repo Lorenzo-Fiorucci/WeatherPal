@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.univpm.oop.WeatherPal.exceptions.EmptyVectorException;
 import com.univpm.oop.WeatherPal.exceptions.InvalidFormatterException;
 import com.univpm.oop.WeatherPal.exceptions.InvalidPeriodException;
-import com.univpm.oop.WeatherPal.model.Filters.DailyPeriod;
-import com.univpm.oop.WeatherPal.model.Filters.HourlyPeriod;
+import com.univpm.oop.WeatherPal.model.Filters.*;
 import com.univpm.oop.WeatherPal.model.Statistics.Stats;
 import com.univpm.oop.WeatherPal.model.tools.Check;
 import com.univpm.oop.WeatherPal.model.tools.JsonParser;
@@ -50,33 +49,34 @@ public class StatsServiceImpl implements StatsService {
 
         LocalDateTime dateTime1 = LocalDateTime.parse(day1 + " " + time1, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
         LocalDateTime dateTime2 = LocalDateTime.parse(day2 + " " + time2, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
-        HourlyPeriod houPer = new HourlyPeriod(dateTime1, dateTime2);
+        HourlyPeriod houPer;
+        if(dateTime1.plusHours(1).compareTo(dateTime2) > 0) // se date/time iniziali sono successivi a date/time finali, oppure meno di 1 ora precedenti
+            throw new InvalidPeriodException("The period is not valid");
+        else
+            houPer = new HourlyPeriod(dateTime1, dateTime2);
 
-        String response;
+        String response = "";
         ObjectMapper mapper = new ObjectMapper();
-
-        if (city.toLowerCase().equals("ancona")
-                && getHouPer("\\src\\main\\resources\\static\\Every1h").contains(dateTime1)
-                && getHouPer("\\src\\main\\resources\\static\\Every1h").contains(dateTime2)) {
-
-            Stats statsObj = new Stats(JsonParser.HourlyFile(houPer));
-
-            response = mapper.writeValueAsString(statsObj);
-         } else {
+        boolean fromFile = false;
+        
+        if (city.toLowerCase().equals("ancona")) {
+            try {
+                Check.VerPerHou(houPer, getHouPer("\\src\\main\\resources\\static\\Every1h"));
+                fromFile = true;
+                
+                response = mapper.writeValueAsString(new Stats(JsonParser.HourlyFile(houPer)));
+            } catch (InvalidPeriodException e) {
+                // non lancio l'eccezione, ma la gestisco perche' voglio controllare se houPer e' contenuto nel periodo dell'historical api.
+                // Quindi non faccio nulla nel catch perche' fromFile rimane false ed entro nell'if dell'else successivo
+            }
+        } else if(!fromFile){
 
             HourlyPeriod hisPer = new HourlyPeriod(LocalDate.now().minusDays(5), LocalTime.of(01, 00),
-                    LocalDate.now(), LocalTime.now());
-            if (hisPer.contains(houPer)){
-
-                Stats statsObj = new Stats(JsonParser.fromHistoricalHourly(city, houPer));
-                response = mapper.writeValueAsString(statsObj);
-
-            } else {
-
-                throw new InvalidPeriodException("This period is not available");
-            }
+                                                   LocalDate.now(), LocalTime.now());
+            Check.VerPerHou(houPer, hisPer);
+            
+            response = mapper.writeValueAsString(new Stats(JsonParser.fromHistoricalHourly(city, houPer)));
         }
-
         return response;
     }
 
@@ -89,23 +89,18 @@ public class StatsServiceImpl implements StatsService {
 
         LocalDate date1 = LocalDate.parse(day1, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         LocalDate date2 = LocalDate.parse(day2, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-
-        DailyPeriod dayPer = new DailyPeriod(date1, date2);
+        DailyPeriod dayPer;
+        
+        if(date1.compareTo(date2) > 0)
+            throw new InvalidPeriodException("Start date cannot be after end date");
+        else
+            dayPer = new DailyPeriod(date1, date2);
+        
         DailyPeriod hisPer = new DailyPeriod(LocalDate.now().minusDays(5), LocalDate.now());
-
-        String response = null;
+        Check.VerPerDay(dayPer, hisPer);
+        
         ObjectMapper mapper = new ObjectMapper();
 
-        if (hisPer.contains(dayPer)){
-
-            Stats statsObj = new Stats(JsonParser.fromHistoricalDaily(city, dayPer));
-            response = mapper.writeValueAsString(statsObj);
-
-        } else {
-
-                throw new InvalidPeriodException("This period is not available");
-        }
-
-        return response;
+        return mapper.writeValueAsString(new Stats(JsonParser.fromHistoricalDaily(city, dayPer)));
     }
 }
