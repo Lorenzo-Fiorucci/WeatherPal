@@ -2,9 +2,9 @@ package com.univpm.oop.WeatherPal.model.City;
 
 public class GeoPoint {
 
-    private double lat;
-    private double lon;
-    private int alt;
+    protected double lat;
+    protected double lon;
+    protected int alt;
 
     public GeoPoint(double lat, double lon, int alt) {
         this.lat = lat;
