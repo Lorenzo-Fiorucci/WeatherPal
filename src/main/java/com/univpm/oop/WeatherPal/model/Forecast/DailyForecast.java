@@ -2,6 +2,9 @@ package com.univpm.oop.WeatherPal.model.Forecast;
 
 import java.time.LocalTime;
 
+/**
+ * Class that represents a meteorological forecast for a generic future day
+ */
 public class DailyForecast extends Forecast {
     private LocalTime sunrise;
     private LocalTime sunset;

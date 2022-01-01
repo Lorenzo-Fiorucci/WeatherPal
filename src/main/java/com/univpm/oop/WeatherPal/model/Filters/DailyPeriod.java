@@ -10,7 +10,7 @@ import java.time.format.*;
 
 /**
  * Class that represent a period of time between two LocalDate objects.
- * Designed to facilitate verification of dates contained or not in a certain period.
+ * Designed to simplify verification of dates (or entire periods) contained or not in a certain period.
  */
 @JsonSerialize(using = DailyPeriodSerializer.class)
 public class DailyPeriod {

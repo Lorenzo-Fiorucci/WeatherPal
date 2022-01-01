@@ -5,8 +5,18 @@ import com.univpm.oop.WeatherPal.model.Statistics.Distribution;
 
 import java.util.*;
 
+/**
+ * Class to find max, min, average, variance and standard deviation of a given vector of {@code Measure} (or suubclasses)
+ */
 public class MeasuresAnalyzer {
 
+	/**
+	 * Method to get the maximum element of a vector of {@code Measure} (or subclasses). The values of these measures must implement
+	 * {@code Comparable} interface, because vector's elements are compared using {@code Comparable}'s {@code compareTo} method.
+	 * @param <T> T : class that implements {@code Comparable} interface
+	 * @param array : vector of {@code Measure} (or subclasses) with values that implements {@code Comparable} interface
+	 * @return the maximum element of {@code array}
+	 */
 	public static <T> Measure<? extends Comparable<T>> findMax(Vector<? extends Measure<? extends Comparable<T>>> array) {
 		
 		int maxIndex = 0;
@@ -18,6 +28,13 @@ public class MeasuresAnalyzer {
 		return array.get(maxIndex);
 	}
 
+	/**
+	 * Method to get the minimum element of a vector of {@code Measure} (or subclasses). The values of these measures must implement
+	 * {@code Comparable} interface, because vector's elements are compared using {@code Comparable}'s {@code compareTo} method.
+	 * @param <T> T : class that implements {@code Comparable} interface
+	 * @param array : vector of {@code Measure} (or subclasses) with values that implements {@code Comparable} interface
+	 * @return the minumum element of array
+	 */
 	public static  <T> Measure<? extends Comparable<T>> findMin(Vector<? extends Measure<? extends Comparable<T>>> array) {
 
 		int minIndex = 0;
@@ -112,6 +129,12 @@ public class MeasuresAnalyzer {
 		return Distribution.complexStdDev(getValues(array));
 	}
 
+	/**
+	 * Method to get a vector of certain values from a vector of measures of those values
+	 * @param <T> T : class of the values of array's measures
+	 * @param array : vector of {@code Measure} (or subclasses) of {@code T}
+	 * @return a vector of only the values of array's measures 
+	 */
 	private static <T> Vector<T> getValues(Vector<? extends Measure<T>> array) {
 		
 		Vector<T> values = new Vector<>();

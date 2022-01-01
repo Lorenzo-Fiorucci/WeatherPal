@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * Class that represents a generic measure
- * @param T 
- * 		: the concrete type for the measure value. It must be a class that extends
- * 		<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Number.html">Number</a>
+ * @param T : the concrete type for the measure value
  */
 @JsonSerialize(using = MeasureSerializer.class)
 public class Measure<T> {
@@ -51,7 +49,7 @@ public class Measure<T> {
 
 	@Override
 	public String toString() {
-		String toReturn = "value: " + value;
+		String toReturn = value.toString();
 		if(unit != "")
 			toReturn += " " + unit;
 		return toReturn;

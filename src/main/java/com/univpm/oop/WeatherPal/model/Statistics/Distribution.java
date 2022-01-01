@@ -3,6 +3,11 @@ package com.univpm.oop.WeatherPal.model.Statistics;
 import com.univpm.oop.WeatherPal.model.tools.ReflectionTools;
 import java.util.*;
 
+/**
+ * Interfaces implemented by the classes of which, if collected in a vector, can be calculated average, variance and standard deviation.
+ * It has implemented static methods to calculate average, variance and standard deviation from a vector whose elements' class
+ * implements this interface. It has also methods to do the same calculations from a simple vector of something that extends {@code Number}.
+ */
 public interface Distribution {
 
 	/**
@@ -72,8 +77,8 @@ public interface Distribution {
 	public static <E> HashMap<String,Object> complexAvg(Vector<? extends Distribution> array) {
 		
 		HashMap<String, Object> toReturn = new HashMap<>();
-		HashMap<String, Vector<E>> fieldValues = ReflectionTools.getFieldValues(array); // non Vector<Object> perche' il compilatore vuole tutti elementi Object (e non sottoclassi)
-																		// quindi mi impedisce di castare a Vector<? extends Number> a riga 24.
+		HashMap<String, Vector<E>> fieldValues = ReflectionTools.getFieldValues(array); // non Vector<Object> perche' il compilatore mi
+																				// impedisce di castare a Vector<? extends Number> a riga 86.
 		
 		for (Map.Entry<String, Vector<E>> entry : fieldValues.entrySet()) {
 			

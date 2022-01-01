@@ -14,7 +14,7 @@ import java.util.*;
 import java.time.*;
 
 /**
- * Class that stores all the statistics of a set of forecast events
+ * Class that stores all the statistics of a set of meteorological forecasts
  */
 @JsonSerialize(using = StatsSerializer.class)
 public class Stats {

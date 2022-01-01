@@ -11,9 +11,7 @@ import java.time.format.*;
 
 /**
  * Class that represents a measure with a date
- * @param T 
- * 		: the concrete type for the measure value. It must be a class that extends
- * 		<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Number.html">Number</a>
+ * @param T : the concrete type for the measure value
  */
 @JsonSerialize(using = DailyMeasureSerializer.class)
 public class DailyMeasure<T> extends Measure<T>{
@@ -43,7 +41,7 @@ public class DailyMeasure<T> extends Measure<T>{
 	
 	public DailyMeasure(T value, String unit, long epochSeconds) {
 		super(value, unit);
-		date = EpochConverter.toLocalDate(epochSeconds);
+		date = EpochConverter.toLocalDateTime(epochSeconds).toLocalDate();
 	}
 	
 	public DailyMeasure(T value, long epochSeconds) {

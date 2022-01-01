@@ -9,15 +9,23 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+/**
+ * Class with to store in a local file the response to a call to OpenWeatherMap Current Weather API, always at an "o'clock time".
+ */
 public class TimerForecast {
 
     public static void main(String[] args) {
-
-        TimerTask timerTask = new TimerTask() {
+        
+        TimerTask currentWeatherTask = new TimerTask() {
 
             @Override
             public void run() {
@@ -29,19 +37,29 @@ public class TimerForecast {
                         LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm")) + ".txt";
 
                 File file = new File(root + folderPath);
-
+                
+                ObjectMapper mapper = new ObjectMapper();
                 try {
+                    JsonNode jNode = mapper.readTree(httpGET(url).body());
+                    String str = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jNode);
+                    
                     FileWriter writer = new FileWriter(file);
-                    writer.write(httpGET(url).body());
+                    writer.write(str);
                     writer.close();
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException | IOException e) {
+                    System.out.println(e);
                 }
             }
         };
-
         Timer timer = new Timer();
-        timer.schedule(timerTask, 10, 60000);
+
+        LocalDateTime dateTime = LocalDateTime.now();
+        while(dateTime.getMinute() != 0)
+            dateTime.plusMinutes(1); // arriva al prossimo orario 'in punto'
+        
+        Date startDateTask = Date.from(dateTime.toInstant(ZoneOffset.ofHours(1)));
+        
+        timer.scheduleAtFixedRate(currentWeatherTask, startDateTask, 1000 * 60 * 60);
     }
 
 

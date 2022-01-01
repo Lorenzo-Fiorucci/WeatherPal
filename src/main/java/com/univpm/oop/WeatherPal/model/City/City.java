@@ -7,6 +7,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Vector;
 
+/**
+ * Class that models a city subject of meteorological forecasts.
+ * Forecast informations are contained in a vector of {@link Forecast} or its subclasses
+ */
 @JsonSerialize(using = CitySerializer.class)
 public class City extends GeoPoint {
 
