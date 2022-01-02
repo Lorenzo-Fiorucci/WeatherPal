@@ -80,18 +80,20 @@ public class JsonParser {
 
 			LocalDateTime localDateTime = EpochConverter.toLocalDateTime(node.get("dt").asInt());
 
-			HourlyForecast forecast = new HourlyForecast();
-			forecast.setTemp(new Measure<Double>(node.get("main").get("temp").asDouble(), "°C"));
-			forecast.setFeelsLike(new Measure<Double>(node.get("main").get("feels_like").asDouble(), "°C"));
-			forecast.setHumidity(new Measure<Byte>((byte) node.get("main").get("humidity").asInt(), "%"));
-			forecast.setWind(new Measure<Integer>(node.get("wind").get("speed").asInt(), "m/s"));
-			forecast.setPressure(new Measure<Integer>(node.get("main").get("pressure").asInt(), "hPa"));
-			forecast.setClouds(new Measure<Byte>((byte) node.get("clouds").get("all").asInt(), "%"));
-			forecast.setDate(localDateTime.toLocalDate());
-			forecast.setTime(localDateTime.toLocalTime());
+			if (hourlyPeriod.contains(localDateTime)) {
 
-			forecasts.add(forecast);
+				HourlyForecast forecast = new HourlyForecast();
+				forecast.setTemp(new Measure<Double>(node.get("main").get("temp").asDouble(), "°C"));
+				forecast.setFeelsLike(new Measure<Double>(node.get("main").get("feels_like").asDouble(), "°C"));
+				forecast.setHumidity(new Measure<Byte>((byte) node.get("main").get("humidity").asInt(), "%"));
+				forecast.setWind(new Measure<Integer>(node.get("wind").get("speed").asInt(), "m/s"));
+				forecast.setPressure(new Measure<Integer>(node.get("main").get("pressure").asInt(), "hPa"));
+				forecast.setClouds(new Measure<Byte>((byte) node.get("clouds").get("all").asInt(), "%"));
+				forecast.setDate(localDateTime.toLocalDate());
+				forecast.setTime(localDateTime.toLocalTime());
 
+				forecasts.add(forecast);
+			}
 		}
 
 		Vector<AirPollution> pollutions = historicAirPoll(43.55, 13.1667, LocalDateTime.of(hourlyPeriod.getStartDate(), hourlyPeriod.getStartTime()),
