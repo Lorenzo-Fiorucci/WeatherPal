@@ -14,7 +14,7 @@ import java.time.format.DateTimeParseException;
 
 /**
  * Class that represent a period of time between two LocalDateTime objects.
- * Designed to facilitate verification of dates contained or not in a certain period.
+ * Designed to simplify verification of dates (or entire periods) contained or not in a certain period.
  */
 @JsonSerialize(using = HourlyPeriodSerializer.class)
 public class HourlyPeriod extends DailyPeriod{

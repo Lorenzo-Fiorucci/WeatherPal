@@ -1,7 +1,9 @@
 package com.univpm.oop.WeatherPal.model.tools;
 
 import java.time.*;
-
+/**
+ * Class to simplify conversions from and to epoch seconds
+ */
 public class EpochConverter {
 
 	/**
@@ -10,28 +12,7 @@ public class EpochConverter {
 	 * @return LocalDateTime corresponding to {@code epochSeconds}
 	 */
 	public static LocalDateTime toLocalDateTime(long epochSeconds){
-		LocalDateTime dateTime = LocalDateTime.ofEpochSecond(epochSeconds, 0, ZoneOffset.ofHours(1));
-		return dateTime;
-	}
-
-	/**
-	 * 
-	 * @param epochSeconds : seconds passed from 01-01-1970 (EPOCH)
-	 * @return LocalDate corresponding to {@code epochSeconds}
-	 */
-	public static LocalDate toLocalDate(long epochSeconds) {
-		LocalDateTime dateTime = LocalDateTime.ofEpochSecond(epochSeconds, 0, ZoneOffset.ofHours(1));
-		return dateTime.toLocalDate();
-	}
-
-	/**
-	 * 
-	 * @param epochSeconds : seconds passed from 01-01-1970 (EPOCH)
-	 * @return LocalDateTime corresponding to {@code epochSeconds} 
-	 */
-	public static LocalTime toLocalTime(long epochSeconds) {
-		LocalDateTime dateTime = LocalDateTime.ofEpochSecond(epochSeconds, 0, ZoneOffset.ofHours(1));
-		return dateTime.toLocalTime();
+		return LocalDateTime.ofEpochSecond(epochSeconds, 0, ZoneOffset.ofHours(1));
 	}
 
 	/**
@@ -46,7 +27,7 @@ public class EpochConverter {
 	}
 
 	/**
-	 * Gets a LOcalDateTime object and returns seconds passed from the EPOCH moment
+	 * Gets a LocalDateTime object and returns seconds passed from the EPOCH moment
 	 * @param dateTime
 	 * @return second passed from 01-01-1970 (EPOCH)
 	 */

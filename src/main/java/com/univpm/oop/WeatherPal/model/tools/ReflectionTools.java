@@ -3,6 +3,9 @@ package com.univpm.oop.WeatherPal.model.tools;
 import java.util.*;
 import java.lang.reflect.*;
 
+/**
+ * Class with static methods that use reflection to retrieve certain elements of a class without knowing what class it is
+ */
 public class ReflectionTools {
 	
 	/**

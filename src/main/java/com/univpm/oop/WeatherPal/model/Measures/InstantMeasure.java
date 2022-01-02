@@ -13,9 +13,7 @@ import java.time.format.DateTimeParseException;
 
 /**
  * Class that represents measures with date and time
- * @param T 
- * 		: the concrete type for the measure value. It must be a class that extends
- * 		<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Number.html">Number</a>
+ * @param T : the concrete type for the measure value
  */
 @JsonSerialize(using = InstantMeasureSerializer.class)
 public class InstantMeasure<T> extends DailyMeasure<T> {
@@ -35,7 +33,7 @@ public class InstantMeasure<T> extends DailyMeasure<T> {
 	 */
 	public InstantMeasure(T value, String unit, long epochSeconds) {
 		super(value, unit, epochSeconds);
-		time = EpochConverter.toLocalTime(epochSeconds);
+		time = EpochConverter.toLocalDateTime(epochSeconds).toLocalTime();
 	}
 
 	public InstantMeasure(T value, long epochSeconds) {

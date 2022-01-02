@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.time.LocalDate;
 
+/**
+ * Class that represents a meteorological forecast
+ */
 @JsonSerialize(using = ForecastSerializer.class)
 public class Forecast {
 

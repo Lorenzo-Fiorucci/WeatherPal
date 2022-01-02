@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.HashMap;
 
+/**
+ * Class that represents a weather condition
+ */
 @JsonSerialize(using = WeatherSerializer.class)
 public class Weather {
     private int id;
@@ -16,8 +19,6 @@ public class Weather {
         this.type = type;
         this.description = description;
     }
-
-    HashMap<Integer, Weather> Weather = new HashMap<Integer, Weather>();
 
     public int getId(){
         return id;

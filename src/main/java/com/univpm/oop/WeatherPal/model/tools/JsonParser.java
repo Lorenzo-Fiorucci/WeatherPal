@@ -1,5 +1,6 @@
 package com.univpm.oop.WeatherPal.model.tools;
 
+import com.univpm.oop.WeatherPal.model.City.City;
 import com.univpm.oop.WeatherPal.model.City.GeoPoint;
 import com.univpm.oop.WeatherPal.model.Forecast.*;
 import com.univpm.oop.WeatherPal.model.Filters.*;
@@ -20,22 +21,28 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Vector;
 
+/**
+ * Class for parsing json texts.
+ */
 public class JsonParser {
 
 	/**
 	 * 
-	 * @param city : the city queried in the client request
-	 * @return a vector of {@code HourlyForecast} contining the forecast measures for 5 days, every 3 hours.
+	 * @param cityName : the city queried in the client request
+	 * @return a {@code City} object with a "forecasts" field filled with {@code HourlyForecast}s every 3 hours for 5 days
 	 * @throws InterruptedException if the operation of sending the request to OpenWeatherMap API is interrupted
 	 * @throws IOException if an I/O error occurs when sending the request to OpenWeatherMap API
 	 */
-	public static Vector<HourlyForecast> from5dForecast(String city) throws InterruptedException, IOException {
+	public static City from5dForecast(String cityName) throws InterruptedException, IOException {
 
+		GeoPoint point = getCoord(cityName);
+		City city = new City(cityName, setAlt(point));
+		
 		Vector<HourlyForecast> forecasts = new Vector<>();
 		ObjectMapper mapper = new ObjectMapper();
 
 		String apiKey = "65e03c27f11e0b756f47a70056be962f";
-		String url = "https://api.openweathermap.org/data/2.5/forecast?units=metric&q=" + city + "&appid=" + apiKey;
+		String url = "https://api.openweathermap.org/data/2.5/forecast?units=metric&q=" + cityName + "&appid=" + apiKey;
 		JsonNode jNode = mapper.readTree(httpGET(url).body());
 		
 		HourlyForecast forecast;
@@ -61,17 +68,28 @@ public class JsonParser {
 
 			forecasts.add(forecast);
 		}
-		return forecasts;
+		city.setForecasts(forecasts);
+
+		return city;
 	}
 
-	public static Vector<Forecast> HourlyFile(HourlyPeriod hourlyPeriod) throws IOException, InterruptedException {
+	/**
+	 * 
+	 * @param hourlyPeriod : period in which take the file to read
+	 * @return a vector of {@code HourlyForecast} containing all the data on which make stats
+	 * @throws IOException
+	 * 		if an I/O error occurs while reading the files or while sending the request to OpenWeatherMap's air pollution API
+	 * @throws InterruptedException
+	 * 		if the operation of sending the request to OpenWeatherMap air pollution API is interrupted
+	 */
+	public static Vector<HourlyForecast> HourlyFile(HourlyPeriod hourlyPeriod) throws IOException, InterruptedException {
 
-		Vector<Forecast> forecasts = new Vector<>();
+		Vector<HourlyForecast> forecasts = new Vector<>();
 
 		ObjectMapper mapper = new ObjectMapper();
 
 		String root = System.getProperty("user.dir");
-		String folderPath = "\\src\\main\\resources\\static\\Every1h";
+		String folderPath = "\\src\\main\\resources\\static\\Every1h\\";
 		File folder = new File(root + folderPath);
 
 		for (String fileName : folder.list()) {
