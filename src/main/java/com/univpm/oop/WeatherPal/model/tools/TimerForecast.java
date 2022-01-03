@@ -34,7 +34,7 @@ public class TimerForecast {
 
                 String root = System.getProperty("user.dir");
                 String folderPath = "\\src\\main\\resources\\static\\Every1h\\" +
-                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm")) + ".txt";
+                                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm")) + ".txt";
 
                 File file = new File(root + folderPath);
                 
@@ -52,14 +52,18 @@ public class TimerForecast {
             }
         };
         Timer timer = new Timer();
-
         LocalDateTime dateTime = LocalDateTime.now();
-        while(dateTime.getMinute() != 0)
-            dateTime.plusMinutes(1); // arriva al prossimo orario 'in punto'
         
-        Date startDateTask = Date.from(dateTime.toInstant(ZoneOffset.ofHours(1)));
-        
-        timer.scheduleAtFixedRate(currentWeatherTask, startDateTask, 1000 * 60 * 60);
+        if(dateTime.getMinute() == 0) // se e' un orario in punto
+            timer.scheduleAtFixedRate(currentWeatherTask, 1, 1000 * 60 * 60);
+        else {
+            while(dateTime.getMinute() != 0)
+                dateTime = dateTime.plusMinutes(1); // arriva al prossimo orario 'in punto'
+            
+            Date startTaskDate = Date.from(dateTime.toInstant(ZoneOffset.ofHours(1)));
+            
+            timer.scheduleAtFixedRate(currentWeatherTask, startTaskDate, 1000 * 60 * 60);
+        }
     }
 
 

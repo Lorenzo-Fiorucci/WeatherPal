@@ -42,16 +42,20 @@ public class StatsServiceImpl implements StatsService {
         return period;
     }
 
+    /**
+     * Method that returns the message of WeatherPal response to /stats/hourly rout
+     */
+    @Override
     public String getHouStats(String city, String day1, String day2, String time1, String time2)
-            throws InvalidFormatterException, IOException, InterruptedException, EmptyVectorException, InvalidPeriodException {
+            throws InvalidFormatterException, IOException, InterruptedException, InvalidPeriodException {
 
         Check.VerPatHou(day1, day2, time1, time2);
 
         LocalDateTime dateTime1 = LocalDateTime.parse(day1 + " " + time1, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
         LocalDateTime dateTime2 = LocalDateTime.parse(day2 + " " + time2, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
         HourlyPeriod houPer;
-        if(dateTime1.plusHours(1).compareTo(dateTime2) > 0) // se date/time iniziali sono successivi a date/time finali, oppure meno di 1 ora precedenti
-            throw new InvalidPeriodException("The period is not valid");
+        if(dateTime1.plusHours(1).isAfter(dateTime2))
+            throw new InvalidPeriodException("Start date/time is after (or less than an hour before) end date/time");
         else
             houPer = new HourlyPeriod(dateTime1, dateTime2);
 
@@ -59,24 +63,30 @@ public class StatsServiceImpl implements StatsService {
         ObjectMapper mapper = new ObjectMapper();
 
         if (city.toLowerCase().equals("ancona") && getHouPer("\\src\\main\\resources\\static\\Every1h").contains(houPer)) {
-                
-            response = mapper.writeValueAsString(new Stats(JsonParser.HourlyFile(houPer)));
+            try {
+                response = mapper.writeValueAsString(new Stats(JsonParser.HourlyFile(houPer)));
+            } catch (EmptyVectorException e) { // lanciata dal costruttore di Stats se JsonParser restituisce un vettore vuoto
+                throw new InvalidPeriodException("No measures found in that period");
+            }
         } 
         else {
             HourlyPeriod hisPer = new HourlyPeriod(LocalDate.now().minusDays(5), LocalTime.of(01, 00),
                                                    LocalDate.now(), LocalTime.now());
-            if(hisPer.contains(houPer))
-                response = mapper.writeValueAsString(new Stats(JsonParser.fromHistoricalHourly(city, houPer)));
-            else
-                throw new InvalidPeriodException("Stats are not available in this period");
+            if(hisPer.contains(houPer)) {
+                try {
+                    response = mapper.writeValueAsString(new Stats(JsonParser.fromHistoricalHourly(city, houPer)));
+                } catch (EmptyVectorException e) {
+                    throw new InvalidPeriodException("No measures found in this period");
+                }
+            }
+            else throw new InvalidPeriodException("Stats are not available in this period");
         }
         return response;
     }
 
-
     @Override
     public String getDayStats(String city, String day1, String day2)
-            throws InvalidFormatterException, IOException, InvalidPeriodException, InterruptedException, EmptyVectorException {
+            throws InvalidFormatterException, IOException, InvalidPeriodException, InterruptedException {
 
         Check.VerPatDay(day1, day2);
 
@@ -84,7 +94,7 @@ public class StatsServiceImpl implements StatsService {
         LocalDate date2 = LocalDate.parse(day2, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         DailyPeriod dayPer;
         
-        if(date1.compareTo(date2) > 0)
+        if(date1.isAfter(date2))
             throw new InvalidPeriodException("Start date cannot be after end date");
         else
             dayPer = new DailyPeriod(date1, date2);
@@ -93,7 +103,11 @@ public class StatsServiceImpl implements StatsService {
         if(hisPer.contains(dayPer)) {
             
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(new Stats(JsonParser.fromHistoricalDaily(city, dayPer)));
+            try {
+                return mapper.writeValueAsString(new Stats(JsonParser.fromHistoricalDaily(city, dayPer)));
+            } catch (EmptyVectorException e) {
+                throw new InvalidPeriodException("No measures found in this period");
+            }
         }
         else throw new InvalidPeriodException("Stats are not available in this period");
     }
