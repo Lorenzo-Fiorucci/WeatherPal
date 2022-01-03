@@ -96,8 +96,8 @@ public class JsonParser {
 
 			JsonNode node = mapper.readTree(new File(root + folderPath + fileName));
 
-			LocalDateTime localDateTime = EpochConverter.toLocalDateTime(node.get("dt").asInt());
-
+			LocalDateTime localDateTime = EpochConverter.toLocalDateTime(node.get("dt").asInt()).withSecond(0); // poiche' l'orario di inizio e fine dell'hourlyPeriod ha secondi nulli,
+																												// azzero i secondi dell'orario del file per rendere il confronto preciso al minuto e non al secondo
 			if (hourlyPeriod.contains(localDateTime)) {
 
 				HourlyForecast forecast = new HourlyForecast();

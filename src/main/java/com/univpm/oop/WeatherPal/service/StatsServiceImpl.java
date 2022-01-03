@@ -79,7 +79,7 @@ public class StatsServiceImpl implements StatsService {
                     throw new InvalidPeriodException("No measures found in this period");
                 }
             }
-            else throw new InvalidPeriodException("Stats are not available in this period");
+            else throw new InvalidPeriodException("Stats are not available in this period.\nConsult the \"/stats/period\" route to see the allowed period");
         }
         return response;
     }
@@ -109,6 +109,6 @@ public class StatsServiceImpl implements StatsService {
                 throw new InvalidPeriodException("No measures found in this period");
             }
         }
-        else throw new InvalidPeriodException("Stats are not available in this period");
+        else throw new InvalidPeriodException("Stats are not available in this period.\nConsult the \"/stats/period\" route to see the allowed period");
     }
 }

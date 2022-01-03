@@ -49,7 +49,7 @@ public class StatsController {
         HourlyPeriod filePeriod = statsService.getHouPer("\\src\\main\\resources\\static\\Every1h");
         
         String period = "For all the cities, stats are available " + historicalPeriod.toString() + 
-                        ". For Ancona they are also available " + filePeriod.toString();
+                        ".\nFor Ancona they are also available " + filePeriod.toString();
         
         return new ResponseEntity<Object>(period, HttpStatus.OK);
 }
@@ -57,10 +57,10 @@ public class StatsController {
 
     @RequestMapping(value = "/stats/hourly", method = RequestMethod.GET)
     public ResponseEntity<Object> HouStats(@RequestParam(name = "city", defaultValue = "ancona") String city,
-                                           @RequestParam(name = "start date") String day1,
-                                           @RequestParam(name = "end date", required = false) String day2,
-                                           @RequestParam(name = "start time") String time1,
-                                           @RequestParam(name = "end time") String time2) {
+                                           @RequestParam(name = "startDate") String day1,
+                                           @RequestParam(name = "endDate", required = false) String day2,
+                                           @RequestParam(name = "startTime") String time1,
+                                           @RequestParam(name = "endTime") String time2) {
         ResponseEntity<Object> response;
 
         if (day2 == null)
@@ -77,8 +77,8 @@ public class StatsController {
 
     @RequestMapping(value = "/stats/daily", method = RequestMethod.GET)
     public ResponseEntity<Object> getDailyStats(@RequestParam(name = "city", defaultValue = "ancona") String city,
-                                                @RequestParam(name = "start date") String day1,
-                                                @RequestParam(name = "end date") String day2) {
+                                                @RequestParam(name = "startDate") String day1,
+                                                @RequestParam(name = "endDate") String day2) {
 
         ResponseEntity<Object> response;
 
