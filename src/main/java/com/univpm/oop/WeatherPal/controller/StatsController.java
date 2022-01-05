@@ -81,10 +81,6 @@ public class StatsController {
                                                 @RequestParam(name = "endDate") String day2) {
 
         ResponseEntity<Object> response;
-
-        if (day2 == null)
-            day2 = day1;
-
         try {
 
             response = new ResponseEntity<Object>(statsService.getDayStats(city, day1, day2), HttpStatus.OK);
