@@ -53,7 +53,7 @@ public class MeasuresAnalyzer {
 	 */
 	public static double numAvg(Vector<? extends Measure<? extends Number>> array) {
 		
-		return Distribution.simpleAvg(getValues(array));
+		return Distribution.simpleAvg(getValues((Vector) array));
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class MeasuresAnalyzer {
 	 */
 	public static double numVar(Vector<? extends Measure<? extends Number>> array) {
 		
-		return Distribution.simpleVar(getValues(array));
+		return Distribution.simpleVar(getValues((Vector) array));
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class MeasuresAnalyzer {
 	 */
 	public static double numStdDev(Vector<? extends Measure<? extends Number>> array) {
 		
-		return Distribution.simpleStdDev(getValues(array));
+		return Distribution.simpleStdDev(getValues((Vector) array));
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class MeasuresAnalyzer {
 	 */
 	public static HashMap<String, Object> distribAvg(Vector<? extends Measure<? extends Distribution>> array) {
 		
-		return Distribution.complexAvg(getValues(array));
+		return Distribution.complexAvg(getValues((Vector) array));
 	}
 
 
@@ -108,7 +108,7 @@ public class MeasuresAnalyzer {
 	 */
 	public static HashMap<String, Object> distribVar(Vector<? extends Measure<? extends Distribution>> array) {
 		
-		return Distribution.complexVar(getValues(array));
+		return Distribution.complexVar(getValues((Vector) array));
 	}
 
 
@@ -126,7 +126,7 @@ public class MeasuresAnalyzer {
 	 */
 	public static HashMap<String, Object> distribStdDev(Vector<? extends Measure<? extends Distribution>> array) {
 		
-		return Distribution.complexStdDev(getValues(array));
+		return Distribution.complexStdDev(getValues((Vector) array));
 	}
 
 	/**
