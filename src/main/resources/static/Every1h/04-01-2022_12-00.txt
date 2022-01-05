@@ -1,0 +1,41 @@
+{
+  "coord" : {
+    "lon" : 13.1667,
+    "lat" : 43.55
+  },
+  "weather" : [ {
+    "id" : 803,
+    "main" : "Clouds",
+    "description" : "broken clouds",
+    "icon" : "02d"
+  } ],
+  "base" : "stations",
+  "main" : {
+    "temp" : 16.43,
+    "feels_like" : 15.67,
+    "temp_min" : 15.93,
+    "temp_max" : 16.88,
+    "pressure" : 1013,
+    "humidity" : 59
+  },
+  "visibility" : 10000,
+  "wind" : {
+    "speed" : 4.63,
+    "deg" : 220
+  },
+  "clouds" : {
+    "all" : 75
+  },
+  "dt" : 1641294000,
+  "sys" : {
+    "type" : 2,
+    "id" : 2008011,
+    "country" : "IT",
+    "sunrise" : 1641278430,
+    "sunset" : 1641311012
+  },
+  "timezone" : 3600,
+  "id" : 3183087,
+  "name" : "Provincia di Ancona",
+  "cod" : 200
+}

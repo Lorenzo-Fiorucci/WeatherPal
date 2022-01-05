@@ -30,7 +30,7 @@ public class TimerForecast {
             @Override
             public void run() {
 
-                String url = "https://api.openweathermap.org/data/2.5/weather?q=ancona&appid=65e03c27f11e0b756f47a70056be962f";
+                String url = "https://api.openweathermap.org/data/2.5/weather?q=ancona&units=metric&appid=65e03c27f11e0b756f47a70056be962f";
 
                 String root = System.getProperty("user.dir");
                 String folderPath = "\\src\\main\\resources\\static\\Every1h\\" +
