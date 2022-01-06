@@ -61,7 +61,7 @@ public class JsonParser {
 			forecast.setTemp(new Measure<Double>(element.get("main").get("temp").asDouble(), "°C"));
 			forecast.setFeelsLike(new Measure<Double>(element.get("main").get("feels_like").asDouble(), "°C"));
 			forecast.setHumidity(new Measure<Byte>((byte)element.get("main").get("humidity").asInt(), "%"));
-			forecast.setPressure(new Measure<Integer>(element.get("main").get("pressure").asInt(), "hPa"));
+			forecast.setPressure(new Measure<Integer>(element.get("main").get("pressure").asInt(), "mbar"));
 			forecast.setWind(new Measure<Integer>(element.get("wind").get("speed").asInt(), "m/s"));
 			forecast.setClouds(new Measure<Byte>((byte)element.get("clouds").get("all").asInt(), "%"));
 			forecast.setPop(new Measure<Byte>((byte)Math.round(element.get("pop").asDouble() * 100), "%"));
@@ -105,7 +105,7 @@ public class JsonParser {
 				forecast.setFeelsLike(new Measure<Double>(node.get("main").get("feels_like").asDouble(), "°C"));
 				forecast.setHumidity(new Measure<Byte>((byte) node.get("main").get("humidity").asInt(), "%"));
 				forecast.setWind(new Measure<Integer>(node.get("wind").get("speed").asInt(), "m/s"));
-				forecast.setPressure(new Measure<Integer>(node.get("main").get("pressure").asInt(), "hPa"));
+				forecast.setPressure(new Measure<Integer>(node.get("main").get("pressure").asInt(), "mbar"));
 				forecast.setClouds(new Measure<Byte>((byte) node.get("clouds").get("all").asInt(), "%"));
 				forecast.setDate(localDateTime.toLocalDate());
 				forecast.setTime(localDateTime.toLocalTime());
@@ -171,7 +171,7 @@ public class JsonParser {
 					forecast.setFeelsLike(new Measure<Double>(hourlySample.get("feels_like").asDouble(), "°C"));
 					forecast.setHumidity(new Measure<Byte>((byte)hourlySample.get("humidity").asInt() , "%"));
 					forecast.setWind(new Measure<Integer>(hourlySample.get("wind_speed").asInt(),"m/s"));
-					forecast.setPressure(new Measure<Integer>(hourlySample.get("pressure").asInt(), "hPa"));
+					forecast.setPressure(new Measure<Integer>(hourlySample.get("pressure").asInt(), "mbar"));
 					forecast.setClouds(new Measure<Byte>((byte)hourlySample.get("clouds").asInt(), "%"));
 					
 					forecasts.add(forecast);
@@ -246,7 +246,7 @@ public class JsonParser {
 		dFor.setFeelsLike(new Measure<Double>( MeasuresAnalyzer.numAvg((Vector<InstantMeasure<Double>>) hForecastsFields.get("feelsLike")), "°C"));
 		dFor.setHumidity(new Measure<Byte>( (byte)MeasuresAnalyzer.numAvg((Vector<InstantMeasure<Byte>>) hForecastsFields.get("humidity")), "%"));
 		dFor.setWind(new Measure<Integer>( (int)MeasuresAnalyzer.numAvg((Vector<InstantMeasure<Integer>>) hForecastsFields.get("wind")), "meter/sec"));
-		dFor.setPressure(new Measure<Integer>( (int)MeasuresAnalyzer.numAvg((Vector<InstantMeasure<Integer>>) hForecastsFields.get("pressure")), "hPa"));
+		dFor.setPressure(new Measure<Integer>( (int)MeasuresAnalyzer.numAvg((Vector<InstantMeasure<Integer>>) hForecastsFields.get("pressure")), "mbar"));
 		dFor.setClouds(new Measure<Byte>( (byte)MeasuresAnalyzer.numAvg((Vector<InstantMeasure<Byte>>) hForecastsFields.get("clouds")), "%"));
 		
 		AirPollution poll = new AirPollution();
