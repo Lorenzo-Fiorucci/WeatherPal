@@ -11,7 +11,7 @@
 * [Route](#route)
 * [Examples of routes](#examples-of-routes)
 * [How to write params](#how-to-write-params)
-* [Techniques used and other notes](#techniques-used)
+* [Notes for developers](#notes-for-developers)
 * [UML](#uml)
 * [Credits](#credits)
 * [Authors](#authors)
@@ -285,7 +285,7 @@ For the correct use of the program  you must follow these simple rules:
   
   <a name="/5dForecast"></a>
 ## *localhost:8080/5dForecast*
-> Only the param `city` is required.
+> Here the param `city` is required.
   
   This route returns the forecasts for five days every three hours.
   
@@ -385,10 +385,10 @@ For the correct use of the program  you must follow these simple rules:
   </details>
 
 
-<a name="techniques-used"></a>
-## Techniques used and other notes 🌐
+<a name="notes-for-developers"></a>
+## Notes for developers 🌐
 
-As recommended, here are some notes on techniques used in modeling:
+Here are some notes on modeling techniques and dynamics:
 1. **GENERICS**: we used generic types in several classes and interfaces.
 2. **WILDCARDS**: since we needed the freedom to use any class belonging to a certain 'family' (with a common superclass) as the generic type of a certain attribute, parameter      or entire class definition, we had to introduce also wildcards.
 3. **HOW WE CALCULATE AVG, VAR, STD.DEV**: Distribution interface contains the static methods to calculate average, variance and standard deviaton from a vector of any class        that: (1) extends Number or (2) implements Distribution.
@@ -400,10 +400,12 @@ As recommended, here are some notes on techniques used in modeling:
    - [B] what is the average of an eventual string attribute? And its variance?
    - [C] (other promblems)
 
-   That's why we choosed an hashmap to represent average, var. and std. dev. of a vector with elements of a complex class (which not extends Number but implements Distribution).    This hashmap has the same 'tree node' structure of an object of that complex class: for each entry, the key is the attribute's name, the field its value. Furthermore, it has    the advantages of having all double values and not having the class attributes that do not extend Number nor implement Distribution.
+   That's why we choosed an *hashmap* to represent average, var. and std. dev. of a vector with elements of a complex class (which not extends Number but implements                Distribution). This hashmap has the same 'tree node' structure of an object of that complex class: for each pair key-value, the key is the attribute's name, the value is the    attribute's value. Furthermore, it has the advantages of having all double values and not having the class attributes that do not extend Number nor implement Distribution.
    
-   NOTE: if an attribute belongs to a class that also extends Distribution, its average (or any other stat) is calculated recursively.
-4. **REFLECTION**: to make these calculations on all the attiributes of any class (it only has to implement Distribution), we made use of reflection for retrieving a list of all    fields of the given class. Methods to achieve this goal are contained in the ReflectionTools class.
+   ⚠️NOTE:
+   - if an attribute's class also extends Distribution , its average (or any other stat) is calculated recursively.
+   - to be present in the hashmap, an attribute of the given class not only has to extend Number (this codition includes primitive types too) or implement Distribution, but it      must also have a camel case getter.
+4. **REFLECTION**: to make these calculations on all the attiributes of any class (it only has to implement Distribution), we made use of reflection for retrieving a list of all    fields of the given class. To do this, we get the value of each field using a camel case getter: that's why fields that don't have it do not appear in the list of fields and    aren't contained in the hashmap. Methods that use reflection are contained in the ReflectionTools class.
 5. **HOW WE CALCULATE MAX/MIN**: maximum and minimum values are maximum and minimum elments of the given vector of measures. Its elements must belong to a class that implements    Comparable interface, because we use Comparable's compareTo method.
 
    NOTE: air pollution measures have a specific class that stores the presence of multiple chemical elements. AirPollution class implements Comparable and its compareTo method      is based on european [CAQI](https://en.wikipedia.org/wiki/Air_quality_index#CAQI) (Common Air Quality Index), which considers O3 (Ozone), NO2 (Nitrogen dioxide) and PM10        (particulates): the greater the sum of these 3 elements, the greater the AirPollution object is considered.
