@@ -68,7 +68,7 @@ For the correct use of the program  you must follow these simple rules:
   
   ![Route get Period](https://github.com/MatDor02/WeatherPal/blob/main/pic/Request/getPeriod.png?raw=true)
   
-  <details><summary>CLICK ME to see the period 🔽</summary>
+  <details><summary> <b> CLICK ME TO SEE THE PERIOD </b>🔽 </summary>
   <p>
     
   #### The period is:
@@ -89,7 +89,7 @@ For the correct use of the program  you must follow these simple rules:
   
   ![Route Hourly Stats](https://github.com/MatDor02/WeatherPal/blob/main/pic/Request/HourlyStats.png?raw=true)
   
-  <details><summary>CLICK ME to see hourly stats 🔽</summary>
+  <details><summary> <b> CLICK ME TO SEE HOURLY STATS </b>🔽 </summary>
   <p>
     
   #### The hourly stats are:
@@ -192,7 +192,7 @@ For the correct use of the program  you must follow these simple rules:
   
   ![Route Daily Stats](https://github.com/MatDor02/WeatherPal/blob/main/pic/Request/DailyStats.png?raw=true)
   
-  <details><summary>CLICK ME to see daily stats 🔽</summary>
+  <details><summary> <b> CLICK ME TO SEE DAILY STATS </b>🔽 </summary>
   <p>
     
   #### The daily stats are:
@@ -291,7 +291,7 @@ For the correct use of the program  you must follow these simple rules:
   
   ![Route 5d Forecast](https://github.com/MatDor02/WeatherPal/blob/main/pic/Request/5dForecast.png?raw=true)
   
-  <details><summary>CLICK ME to see 5d forecast 🔽</summary>
+  <details><summary> <b> CLICK ME TO SEE 5d FORECAST </b>🔽 </summary>
   <p>
   
   #### The 5d forecast are:
